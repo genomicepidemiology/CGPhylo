@@ -14,7 +14,7 @@ def produce_features(args):
     produce_kmers(args)
     print ('no error')
     print (all_files)
-    matrix = np.zeros(len(all_files), len(all_files))
+    matrix = np.zeros((len(all_files), len(all_files)))
     for i in range(len(matrix)):
         for j in range(len(matrix)):
             if i == j:
