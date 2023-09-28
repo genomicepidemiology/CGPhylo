@@ -25,7 +25,7 @@ def produce_features(args):
                 if len(file_1.split(' ')) == 1:
                     name_1 = file_1.split('/')[-1].split('.')[0]
                 else:
-                    name_1 = file_1.splt(' ')[0].split('/')[-1].split('.')[0]
+                    name_1 = file_1.spilt(' ')[0].split('/')[-1].split('.')[0]
                 if len(file_2.split(' ')) == 1:
                     name_2 = file_2.split('/')[-1].split('.')[0]
                 else:
