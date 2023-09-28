@@ -77,10 +77,48 @@ def produce_features(args):
                 read_set_1 = read_file_to_set('output/{}_21mers.txt'.format(name_1))
                 read_set_2 = read_file_to_set('output/{}_21mers.txt'.format(name_2))
                 matrix_21mers[i][j] = jaccard_index(read_set_1, read_set_2)
-    print ('21mers')
-    print (matrix_21mers)
+
+    for item in all_files:
+        nucleotide_counts = read_nucleotide_counts(item)
+        gc_content = calculate_gc_content(nucleotide_counts)
+
+    print(f"GC content: {gc_content:.2f}%")
 
     return 'test'
+
+
+def read_nucleotide_counts(filename):
+    """Reads nucleotide counts from a file and returns a dictionary."""
+    nucleotide_counts = {}
+    if len(filename.split(' ')) == 1:
+        name = filename.split('/')[-1].split('.')[0]
+        with open('output/{}_1mers.txt', 'r') as f:
+            for line in f:
+                nucleotide, count = line.strip().split('\t')
+                nucleotide_counts[nucleotide] = int(count)
+    else:
+        name = filename.split(' ')[0].split('/')[-1].split('.')[0]
+        with open('output/{}_1mers.txt'.format(name), 'r') as f:
+            for line in f:
+                nucleotide, count = line.strip().split('\t')
+                nucleotide_counts[nucleotide] = int(count)
+        name = filename.split(' ')[1].split('/')[-1].split('.')[0]
+        with open('output/{}_1mers.txt'.format(name), 'r') as f:
+            for line in f:
+                nucleotide, count = line.strip().split('\t')
+                nucleotide_counts[nucleotide] += int(count)
+    return nucleotide_counts
+
+
+def calculate_gc_content(nucleotide_counts):
+    """Calculates GC content from a dictionary of nucleotide counts."""
+    gc_count = nucleotide_counts.get('G', 0) + nucleotide_counts.get('C', 0)
+    total_count = sum(nucleotide_counts.values())
+
+    if total_count == 0:
+        return 0
+
+    return (gc_count / total_count) * 100
 def produce_kmers(args):
     """Produces kmer files for the input file."""
     for item in args.illumina:
