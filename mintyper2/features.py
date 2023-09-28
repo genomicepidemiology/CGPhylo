@@ -12,6 +12,7 @@ def produce_features(args):
         illumina_list.append(string)
     all_files.extend(illumina_list)
     produce_kmers(args)
+    print ('no error')
     matrix = np.zeros(len(all_files), len(all_files))
     for i in range(len(matrix)):
         for j in range(len(matrix)):
@@ -30,6 +31,8 @@ def produce_features(args):
                     name_2 = file_2.split(' ')[0].split('/')[-1].split('.')[0]
                 read_set_1 = read_file_to_set('output/{}_1mers.txt'.format(name_1))
                 read_set_2 = read_file_to_set('output/{}_1mers.txt'.format(name_2))
+                print (read_set_1)
+                print (read_set_2)
                 matrix[i][j] = jaccard_index(read_set_1, read_set_2)
     return matrix
 def produce_kmers(args):
