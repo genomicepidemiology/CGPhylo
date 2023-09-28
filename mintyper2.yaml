@@ -1,0 +1,6 @@
+name: mintyper2
+channels:
+  - bioconda
+  - defaults
+dependencies:
+  - kmc
