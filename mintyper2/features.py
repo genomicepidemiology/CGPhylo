@@ -18,7 +18,19 @@ def produce_features(args):
             if i == j:
                 matrix[i][j] = 1
             else:
-                matrix[i][j] = jaccard_index(read_file_to_set(all_files[i]), read_file_to_set(all_files[j]))
+                file_1 = all_files[i]
+                file_2 = all_files[j]
+                if len(file_1.split(' ')) == 1:
+                    name_1 = file_1.split('/')[-1].split('.')[0]
+                else:
+                    name_1 = file_1.splt(' ')[0].split('/')[-1].split('.')[0]
+                if len(file_2.split(' ')) == 1:
+                    name_2 = file_2.split('/')[-1].split('.')[0]
+                else:
+                    name_2 = file_2.split(' ')[0].split('/')[-1].split('.')[0]
+                read_set_1 = read_file_to_set('output/{}_1mers.txt'.format(name_1))
+                read_set_2 = read_file_to_set('output/{}_1mers.txt'.format(name_2))
+                matrix[i][j] = jaccard_index(read_set_1, read_set_2)
     return matrix
 def produce_kmers(args):
     """Produces kmer files for the input file."""
