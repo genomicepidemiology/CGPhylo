@@ -12,8 +12,6 @@ def produce_features(args):
         illumina_list.append(string)
         all_files.append(string)
     produce_kmers(args)
-    print ('no error')
-    print (all_files)
     matrix_5mers = np.zeros((len(all_files), len(all_files)))
     for i in range(len(matrix_5mers)):
         for j in range(len(matrix_5mers)):
@@ -34,6 +32,7 @@ def produce_features(args):
                 read_set_2 = read_file_to_set('output/{}_5mers.txt'.format(name_2))
                 matrix_5mers[i][j] = jaccard_index(read_set_1, read_set_2)
 
+    print ('5mers')
     print (matrix_5mers)
 
     matrix_13mers = np.zeros((len(all_files), len(all_files)))
@@ -55,8 +54,9 @@ def produce_features(args):
                 read_set_1 = read_file_to_set('output/{}_13mers.txt'.format(name_1))
                 read_set_2 = read_file_to_set('output/{}_13mers.txt'.format(name_2))
                 matrix_13mers[i][j] = jaccard_index(read_set_1, read_set_2)
-
+    print ('13mers')
     print (matrix_13mers)
+
 
     matrix_21mers = np.zeros((len(all_files), len(all_files)))
     for i in range(len(matrix_21mers)):
@@ -77,7 +77,8 @@ def produce_features(args):
                 read_set_1 = read_file_to_set('output/{}_21mers.txt'.format(name_1))
                 read_set_2 = read_file_to_set('output/{}_21mers.txt'.format(name_2))
                 matrix_21mers[i][j] = jaccard_index(read_set_1, read_set_2)
-
+    print ('21mers')
+    print (matrix_21mers)
 
     return 'test'
 def produce_kmers(args):
