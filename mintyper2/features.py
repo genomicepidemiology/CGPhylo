@@ -10,9 +10,10 @@ def produce_features(args):
     for i in range(0, len(args.illumina), 2):
         string = args.illumina[i] + ' ' + args.illumina[i+1]
         illumina_list.append(string)
-    all_files.extend(illumina_list)
+        all_files.append(string)
     produce_kmers(args)
     print ('no error')
+    print (all_files)
     matrix = np.zeros(len(all_files), len(all_files))
     for i in range(len(matrix)):
         for j in range(len(matrix)):
