@@ -12,11 +12,11 @@ def produce_features(args):
         illumina_list.append(string)
         all_files.append(string)
     produce_kmers(args)
-    matrix_5mers = np.zeros((len(all_files), len(all_files)))
-    for i in range(len(matrix_5mers)):
-        for j in range(len(matrix_5mers)):
+    matrix_9mers = np.zeros((len(all_files), len(all_files)))
+    for i in range(len(matrix_9mers)):
+        for j in range(len(matrix_9mers)):
             if i == j:
-                matrix_5mers[i][j] = 1
+                matrix_9mers[i][j] = 1
             else:
                 file_1 = all_files[i]
                 file_2 = all_files[j]
@@ -28,18 +28,18 @@ def produce_features(args):
                     name_2 = file_2.split('/')[-1].split('.')[0]
                 else:
                     name_2 = file_2.split(' ')[0].split('/')[-1].split('.')[0]
-                read_set_1 = read_file_to_set('output/{}_5mers.txt'.format(name_1))
-                read_set_2 = read_file_to_set('output/{}_5mers.txt'.format(name_2))
-                matrix_5mers[i][j] = jaccard_index(read_set_1, read_set_2)
+                read_set_1 = read_file_to_set('output/{}_9mers.txt'.format(name_1))
+                read_set_2 = read_file_to_set('output/{}_9mers.txt'.format(name_2))
+                matrix_9mers[i][j] = jaccard_index(read_set_1, read_set_2)
 
-    print ('5mers')
-    print (matrix_5mers)
+    print ('9mers')
+    print (matrix_9mers)
 
-    matrix_13mers = np.zeros((len(all_files), len(all_files)))
-    for i in range(len(matrix_13mers)):
-        for j in range(len(matrix_13mers)):
+    matrix_15mers = np.zeros((len(all_files), len(all_files)))
+    for i in range(len(matrix_15mers)):
+        for j in range(len(matrix_15mers)):
             if i == j:
-                matrix_13mers[i][j] = 1
+                matrix_15mers[i][j] = 1
             else:
                 file_1 = all_files[i]
                 file_2 = all_files[j]
@@ -51,11 +51,11 @@ def produce_features(args):
                     name_2 = file_2.split('/')[-1].split('.')[0]
                 else:
                     name_2 = file_2.split(' ')[0].split('/')[-1].split('.')[0]
-                read_set_1 = read_file_to_set('output/{}_13mers.txt'.format(name_1))
-                read_set_2 = read_file_to_set('output/{}_13mers.txt'.format(name_2))
-                matrix_13mers[i][j] = jaccard_index(read_set_1, read_set_2)
-    print ('13mers')
-    print (matrix_13mers)
+                read_set_1 = read_file_to_set('output/{}_15mers.txt'.format(name_1))
+                read_set_2 = read_file_to_set('output/{}_15mers.txt'.format(name_2))
+                matrix_15mers[i][j] = jaccard_index(read_set_1, read_set_2)
+    print ('15mers')
+    print (matrix_15mers)
 
 
     matrix_21mers = np.zeros((len(all_files), len(all_files)))
@@ -87,10 +87,10 @@ def produce_kmers(args):
         name = item.split('/')[-1].split('.')[0]
         os.system('kmc -k1 -cs1000000000000 -b {} output/{}_1mers . > output/{}_1mers_stats.txt'.format(item, name, name))
         os.system('kmc_dump output/{}_1mers output/{}_1mers.txt'.format(name, name))
-        os.system('kmc -k5 -cs1000000000 {} output/{}_5mers . > output/{}_5mers_stats.txt'.format(item, name, name))
-        os.system('kmc_dump output/{}_5mers output/{}_5mers.txt'.format(name, name))
-        os.system('kmc -k13 -cs1000000000 {} output/{}_13mers . > output/{}_13mers_stats.txt'.format(item, name, name))
-        os.system('kmc_dump output/{}_13mers output/{}_13mers.txt'.format(name, name))
+        os.system('kmc -k9 -cs1000000000 {} output/{}_9mers . > output/{}_9mers_stats.txt'.format(item, name, name))
+        os.system('kmc_dump output/{}_9mers output/{}_9mers.txt'.format(name, name))
+        os.system('kmc -k15 -cs1000000000 {} output/{}_15mers . > output/{}_15mers_stats.txt'.format(item, name, name))
+        os.system('kmc_dump output/{}_15mers output/{}_15mers.txt'.format(name, name))
         os.system('kmc -k21 -cs1000000000 {} output/{}_21mers . > output/{}_21mers_stats.txt'.format(item, name, name))
         os.system('kmc_dump output/{}_21mers output/{}_21mers.txt'.format(name, name))
 
@@ -98,10 +98,10 @@ def produce_kmers(args):
         name = item.split('/')[-1].split('.')[0]
         os.system('kmc -k1 -cs1000000000000 -b {} output/{}_1mers output/ > output/{}_1mers_stats.txt'.format(item, name, name))
         os.system('kmc_dump output/{}_1mers output/{}_1mers.txt'.format(name, name))
-        os.system('kmc -k5 -cs1000000000 {} output/{}_5mers output/ > output/{}_5mers_stats.txt'.format(item, name, name))
-        os.system('kmc_dump output/{}_5mers output/{}_5mers.txt'.format(name, name))
-        os.system('kmc -k13 -cs1000000000 {} output/{}_13mers output/ > output/{}_13mers_stats.txt'.format(item, name, name))
-        os.system('kmc_dump output/{}_13mers output/{}_13mers.txt'.format(name, name))
+        os.system('kmc -k9 -cs1000000000 {} output/{}_9mers output/ > output/{}_9mers_stats.txt'.format(item, name, name))
+        os.system('kmc_dump output/{}_9mers output/{}_9mers.txt'.format(name, name))
+        os.system('kmc -k15 -cs1000000000 {} output/{}_15mers output/ > output/{}_15mers_stats.txt'.format(item, name, name))
+        os.system('kmc_dump output/{}_15mers output/{}_15mers.txt'.format(name, name))
         os.system('kmc -k21 -cs1000000000 {} output/{}_21mers output/ > output/{}_21mers_stats.txt'.format(item, name, name))
         os.system('kmc_dump output/{}_21mers output/{}_21mers.txt'.format(name, name))
 def read_file_to_set(filename):
