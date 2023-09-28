@@ -24,7 +24,9 @@ if __name__ == '__main__':
     # initialize the options parser
     parser = argparse.ArgumentParser('mintyper2', add_help=False)
 
-    parser.add_argument('--i', action="store", type=str, default='', nargs='+', dest="input",
+    parser.add_argument('--nanopore', action="store", type=str, default=[], nargs='+', dest="nanopore",
+                        help="Input (fastq)")
+    parser.add_argument('--illumina', action="store", type=str, default=[], nargs='+', dest="illumina",
                         help="Input (fastq)")
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
     parser.add_argument('-h', '--help', action='help', help='Show this help message and exit')
