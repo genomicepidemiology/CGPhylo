@@ -5,43 +5,29 @@
 ###############################################################################
 
 import argparse
+import sys
+import os
 import logging
+
+sys.path = [os.path.join(os.path.dirname(os.path.realpath(__file__)),'..')] + sys.path
+
+from mintyper2 import features
+
 from src.version import __version__
 
-def main(arguments):
+def main(args):
     """Main function"""
-    # if arguments.subparser_name == 'install':
-    #     LPFInstall.LPF_installation(arguments)
-    # elif arguments.subparser_name == 'bacteria':
-    #     bacterial_parser = BacterialParser(arguments.bacterial_json)
-    #     bacterial_analysis_pipeline(bacterial_parser)
-    #     pass
-    # elif arguments.subparser_name == 'viral':
-    #     pass
-    # elif arguments.subparser_name == 'metagenomic':
-    pass
+    ml_features = features.produce_features(args)
+    print (ml_features)
 
 if __name__ == '__main__':
     # initialize the options parser
     parser = argparse.ArgumentParser('mintyper2', add_help=False)
-    subparsers = parser.add_subparsers(help="--", dest='subparser_name')
 
-    fasta_parser = subparsers.add_parser('fasta',
-                                             help='Fasta files'
-                                             )
-    fasta_parser.add_argument('alignment', action="store_true", type=bool, default=False, dest="alignment")
-    fasta_parser.add_argument('kmer', action="store_true", type=bool, default=False, dest="kmer")
-    fasta_parser.add_argument('-bacteria', action="store_true", type=bool, default=False, dest="Bacteria")
-    fasta_parser.add_argument('-virus', action="store_true", type=bool, default=False, dest="Virus")
-    fasta_parser.add_argument('-fungi', action="store_true", type=bool, default=False, dest="Fungi")
-    fasta_parser.add_argument('-protozoa', action="store_true", type=bool, default=False, dest="Protozoa")
-    fasta_parser.add_argument('-metagenomic', action="store_true", type=bool, default=False, dest="Metagenomic")
-    fasta_parser.add_argument('--i', action="store", type=str, default='', nargs='+', dest="Input fasta files")
-    fasta_parser.add_argument('--o', action="store", type=str, default='', dest="output path")
-
+    parser.add_argument('--i', action="store", type=str, default='', nargs='+', dest="input",
+                        help="Input (fastq)")
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
     parser.add_argument('-h', '--help', action='help', help='Show this help message and exit')
-
 
     args = parser.parse_args()
 
