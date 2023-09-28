@@ -5,15 +5,21 @@ import numpy as np
 
 def produce_features(args):
     os.mkdir('output')
-    #produce_kmers(args)
     illumina_list = []
+    all_files = args.nanopore
     for i in range(0, len(args.illumina), 2):
         string = args.illumina[i] + ' ' + args.illumina[i+1]
         illumina_list.append(string)
-
-    matrix = np.zeros((len(args.nanopore), len(illumina_list)))
-    print (matrix)
-
+    all_files.extend(illumina_list)
+    produce_kmers(args)
+    matrix = np.zeros(len(all_files), len(all_files))
+    for i in range(len(matrix)):
+        for j in range(len(matrix)):
+            if i == j:
+                matrix[i][j] = 1
+            else:
+                matrix[i][j] = jaccard_index(read_file_to_set(all_files[i]), read_file_to_set(all_files[j]))
+    return matrix
 def produce_kmers(args):
     """Produces kmer files for the input file."""
     for item in args.illumina:
@@ -39,10 +45,20 @@ def produce_kmers(args):
 def read_file_to_set(filename):
     """Reads kmer strings from a file and returns a set of those kmers."""
     kmers = set()
-    with open(filename, 'r') as f:
-        for line in f:
-            kmer, _ = line.strip().split('\t')
-            kmers.add(kmer)
+    if len(filename.split(' ')) == 1:
+        with open(filename, 'r') as f:
+            for line in f:
+                kmer, _ = line.strip().split('\t')
+                kmers.add(kmer)
+    else:
+        with open(filename.split(' ')[0], 'r') as f:
+            for line in f:
+                kmer, _ = line.strip().split('\t')
+                kmers.add(kmer)
+        with open(filename.split(' ')[1], 'r') as f:
+            for line in f:
+                kmer, _ = line.strip().split('\t')
+                kmers.add(kmer)
     return kmers
 
 def jaccard_index(set1, set2):
