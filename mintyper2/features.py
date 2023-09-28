@@ -34,6 +34,7 @@ def produce_features(args):
                 print (read_set_1)
                 print (read_set_2)
                 matrix[i][j] = jaccard_index(read_set_1, read_set_2)
+
     return matrix
 def produce_kmers(args):
     """Produces kmer files for the input file."""
@@ -50,13 +51,13 @@ def produce_kmers(args):
 
     for item in args.nanopore:
         name = item.split('/')[-1].split('.')[0]
-        os.system('kmc -k1 -cs1000000000000 -b {} output/{}_1mers . > output/{}_1mers_stats.txt'.format(item, name, name))
+        os.system('kmc -k1 -cs1000000000000 -b {} output/{}_1mers output/ > output/{}_1mers_stats.txt'.format(item, name, name))
         os.system('kmc_dump output/{}_1mers output/{}_1mers.txt'.format(name, name))
-        os.system('kmc -k5 -cs1000000000 {} output/{}_5mers . > output/{}_5mers_stats.txt'.format(item, name, name))
+        os.system('kmc -k5 -cs1000000000 {} output/{}_5mers output/ > output/{}_5mers_stats.txt'.format(item, name, name))
         os.system('kmc_dump output/{}_5mers output/{}_5mers.txt'.format(name, name))
-        os.system('kmc -k13 -cs1000000000 {} output/{}_13mers . > output/{}_13mers_stats.txt'.format(item, name, name))
+        os.system('kmc -k13 -cs1000000000 {} output/{}_13mers output/ > output/{}_13mers_stats.txt'.format(item, name, name))
         os.system('kmc_dump output/{}_13mers output/{}_13mers.txt'.format(name, name))
-        os.system('kmc -k21 -cs1000000000 {} output/{}_21mers . > output/{}_21mers_stats.txt'.format(item, name, name))
+        os.system('kmc -k21 -cs1000000000 {} output/{}_21mers output/ > output/{}_21mers_stats.txt'.format(item, name, name))
         os.system('kmc_dump output/{}_21mers output/{}_21mers.txt'.format(name, name))
 def read_file_to_set(filename):
     """Reads kmer strings from a file and returns a set of those kmers."""

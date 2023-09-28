@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cbc5ac6c-29b4-420c-a4da-60d902ac48e6" name="Changes" comment="" />
+    <list default="true" id="cbc5ac6c-29b4-420c-a4da-60d902ac48e6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mintyper2/features.py" beforeDir="false" afterPath="$PROJECT_DIR$/mintyper2/features.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -73,7 +76,7 @@
       <updated>1675246350589</updated>
       <workItem from="1675246351716" duration="1468000" />
       <workItem from="1675680616303" duration="303000" />
-      <workItem from="1695886636690" duration="6191000" />
+      <workItem from="1695886636690" duration="6953000" />
     </task>
     <servers />
   </component>
