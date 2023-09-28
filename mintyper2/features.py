@@ -14,11 +14,33 @@ def produce_features(args):
     produce_kmers(args)
     print ('no error')
     print (all_files)
-    matrix = np.zeros((len(all_files), len(all_files)))
-    for i in range(len(matrix)):
-        for j in range(len(matrix)):
+    matrix_5mers = np.zeros((len(all_files), len(all_files)))
+    for i in range(len(matrix_5mers)):
+        for j in range(len(matrix_5mers)):
             if i == j:
-                matrix[i][j] = 1
+                matrix_5mers[i][j] = 1
+            else:
+                file_1 = all_files[i]
+                file_2 = all_files[j]
+                if len(file_1.split(' ')) == 1:
+                    name_1 = file_1.split('/')[-1].split('.')[0]
+                else:
+                    name_1 = file_1.split(' ')[0].split('/')[-1].split('.')[0]
+                if len(file_2.split(' ')) == 1:
+                    name_2 = file_2.split('/')[-1].split('.')[0]
+                else:
+                    name_2 = file_2.split(' ')[0].split('/')[-1].split('.')[0]
+                read_set_1 = read_file_to_set('output/{}_5mers.txt'.format(name_1))
+                read_set_2 = read_file_to_set('output/{}_5mers.txt'.format(name_2))
+                matrix_5mers[i][j] = jaccard_index(read_set_1, read_set_2)
+
+    print (matrix_5mers)
+
+    matrix_13mers = np.zeros((len(all_files), len(all_files)))
+    for i in range(len(matrix_13mers)):
+        for j in range(len(matrix_13mers)):
+            if i == j:
+                matrix_13mers[i][j] = 1
             else:
                 file_1 = all_files[i]
                 file_2 = all_files[j]
@@ -32,9 +54,32 @@ def produce_features(args):
                     name_2 = file_2.split(' ')[0].split('/')[-1].split('.')[0]
                 read_set_1 = read_file_to_set('output/{}_13mers.txt'.format(name_1))
                 read_set_2 = read_file_to_set('output/{}_13mers.txt'.format(name_2))
-                matrix[i][j] = jaccard_index(read_set_1, read_set_2)
+                matrix_13mers[i][j] = jaccard_index(read_set_1, read_set_2)
 
-    return matrix
+    print (matrix_13mers)
+
+    matrix_21mers = np.zeros((len(all_files), len(all_files)))
+    for i in range(len(matrix_21mers)):
+        for j in range(len(matrix_21mers)):
+            if i == j:
+                matrix_21mers[i][j] = 1
+            else:
+                file_1 = all_files[i]
+                file_2 = all_files[j]
+                if len(file_1.split(' ')) == 1:
+                    name_1 = file_1.split('/')[-1].split('.')[0]
+                else:
+                    name_1 = file_1.split(' ')[0].split('/')[-1].split('.')[0]
+                if len(file_2.split(' ')) == 1:
+                    name_2 = file_2.split('/')[-1].split('.')[0]
+                else:
+                    name_2 = file_2.split(' ')[0].split('/')[-1].split('.')[0]
+                read_set_1 = read_file_to_set('output/{}_21mers.txt'.format(name_1))
+                read_set_2 = read_file_to_set('output/{}_21mers.txt'.format(name_2))
+                matrix_21mers[i][j] = jaccard_index(read_set_1, read_set_2)
+
+
+    return 'test'
 def produce_kmers(args):
     """Produces kmer files for the input file."""
     for item in args.illumina:
