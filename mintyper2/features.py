@@ -30,8 +30,8 @@ def produce_features(args):
                     name_2 = file_2.split('/')[-1].split('.')[0]
                 else:
                     name_2 = file_2.split(' ')[0].split('/')[-1].split('.')[0]
-                read_set_1 = read_file_to_set('output/{}_1mers.txt'.format(name_1))
-                read_set_2 = read_file_to_set('output/{}_1mers.txt'.format(name_2))
+                read_set_1 = read_file_to_set('output/{}_13mers.txt'.format(name_1))
+                read_set_2 = read_file_to_set('output/{}_13mers.txt'.format(name_2))
                 print (read_set_1)
                 print (read_set_2)
                 matrix[i][j] = jaccard_index(read_set_1, read_set_2)
