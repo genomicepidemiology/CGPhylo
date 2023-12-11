@@ -78,6 +78,9 @@ def produce_features(args):
                 read_set_2 = read_file_to_set('output/{}_21mers.txt'.format(name_2))
                 matrix_21mers[i][j] = jaccard_index(read_set_1, read_set_2)
 
+    print ('21mers')
+    print (matrix_21mers)
+
     for item in all_files:
         nucleotide_counts = read_nucleotide_counts(item)
         gc_content = calculate_gc_content(nucleotide_counts)

@@ -11,14 +11,13 @@ import logging
 
 sys.path = [os.path.join(os.path.dirname(os.path.realpath(__file__)),'..')] + sys.path
 
-from mintyper2 import features
+from mintyper2 import mintyper2_pipeline
 
 from src.version import __version__
 
 def main(args):
     """Main function"""
-    ml_features = features.produce_features(args)
-    print (ml_features)
+    mintyper2_pipeline.mintyper2_pipeline()
 
 if __name__ == '__main__':
     # initialize the options parser
