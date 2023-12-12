@@ -4,7 +4,8 @@ import sys
 def mintyper2_pipeline():
     #KMA ALIGnment
     gene_list = find_common_genes('output_cpo_test')
-    print (len(gene_list))
+    #Right now we ONLY use perfect length matches
+    print (gene_list)
 
 def load_fsa_gene_files(fsa_file):
     gene_dict = {}
