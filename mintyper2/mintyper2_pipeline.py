@@ -6,10 +6,7 @@ def mintyper2_pipeline():
     gene_list = find_common_genes('/home/people/malhal/mintyper2/test/output_cpo_test')
     #Right now we ONLY use perfect length matches
     file_names, sequences_list = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
-    print (len(file_names))
-    print ('seqs')
-    for item in sequences_list:
-        print (len(item))
+    print (file_names)
 
 
 def extract_sequences(directory, headers):
