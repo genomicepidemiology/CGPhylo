@@ -4,10 +4,45 @@ import sys
 def mintyper2_pipeline():
     #KMA ALIGnment
     gene_list = find_common_genes('/home/people/malhal/mintyper2/test/output_cpo_test')
+    gene_dict = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
+    for key in gene_dict:
+        print (key, len(gene_dict[key]))
     #Right now we ONLY use perfect length matches
-    file_names, sequences_list = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
-    distance_matrix = calculate_distance_matrix(sequences_list)
-    print_distance_matrix(file_names, distance_matrix)
+
+    #file_names, sequences_list = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
+    #distance_matrix = calculate_distance_matrix(sequences_list)
+    #print_distance_matrix(file_names, distance_matrix)
+
+def extract_sequences(directory, headers):
+    sequences_dict = {}
+
+    # Loop through each file in the directory
+    for file in os.listdir(directory):
+        if file.endswith('.fsa'):
+            file_name = file.split('.')[0]
+            sequences_dict[file_name] = {header: '' for header in headers}
+
+            with open(os.path.join(directory, file), 'r') as fsa_file:
+                lines = fsa_file.readlines()
+                current_sequence = ''
+                current_header = None
+
+                # Loop through each line in the file
+                for line in lines:
+                    if line.startswith('>'):
+                        if current_sequence and current_header:
+                            sequences_dict[file_name][current_header] = current_sequence
+                        current_header = line.split()[0][1:]
+                        current_sequence = ''
+                    elif current_header in headers:
+                        current_sequence += line.strip().upper()
+
+                # Add the last found sequence
+                if current_sequence and current_header:
+                    sequences_dict[file_name][current_header] = current_sequence
+
+    return sequences_dict
+
 def print_distance_matrix(file_names, distance_matrix):
     # Find the maximum length of file names for formatting
     max_name_length = max(len(name) for name in file_names)
@@ -37,38 +72,6 @@ def calculate_distance_matrix(sequences):
             distance_matrix[j][i] = differences  # Symmetric matrix
 
     return distance_matrix
-
-def extract_sequences(directory, headers):
-    file_names = []
-    sequences_list = []
-
-    # Loop through each file in the directory
-    for file in os.listdir(directory):
-        if file.endswith('.fsa'):
-            file_names.append(file.split('.')[0])
-            sequences = []
-            with open(os.path.join(directory, file), 'r') as fsa_file:
-                lines = fsa_file.readlines()
-                current_sequence = ''
-                add_sequence = False
-
-                # Loop through each line in the file
-                for line in lines:
-                    if line.startswith('>'):
-                        if current_sequence and add_sequence:
-                            sequences.append(current_sequence)
-                        current_sequence = ''
-                        add_sequence = line.split()[0][1:] in headers
-                    elif add_sequence:
-                        current_sequence += line.strip().upper()
-
-                # Add the last found sequence
-                if current_sequence and add_sequence:
-                    sequences.append(current_sequence)
-
-            sequences_list.append(sequences)
-
-    return file_names, sequences_list
 
 def load_fsa_gene_files(fsa_file):
     gene_dict = {}
