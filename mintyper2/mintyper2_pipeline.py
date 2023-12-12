@@ -43,7 +43,8 @@ def calculate_pairwise_distances(sequences_dict):
                 seq1 = sequences_dict[file_names[i]][gene]
                 seq2 = sequences_dict[file_names[j]][gene]
 
-                diff = sum(1 for a, b in zip(seq1, seq2) if a != b)
+                # Modified comparison to skip lowercase nucleotides
+                diff = sum(1 for a, b in zip(seq1, seq2) if a != b and not (a.islower() or b.islower()))
                 # Count differences
                 count += diff
 
@@ -52,6 +53,7 @@ def calculate_pairwise_distances(sequences_dict):
             distance_matrix[j][i] = count  # Symmetric matrix
 
     return distance_matrix, file_names
+
 def extract_sequences(directory, headers):
     sequences_dict = {}
 
@@ -74,7 +76,7 @@ def extract_sequences(directory, headers):
                         current_header = line.split()[0][1:]
                         current_sequence = ''
                     elif current_header in headers:
-                        current_sequence += line.strip().upper()
+                        current_sequence += line.strip()
 
                 # Add the last found sequence
                 if current_sequence and current_header:
