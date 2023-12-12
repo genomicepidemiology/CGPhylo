@@ -16,6 +16,7 @@ def mintyper2_pipeline():
 
 def calculate_pairwise_distances(sequences_dict):
     file_names = list(sequences_dict.keys())
+    print (file_names)
     num_files = len(file_names)
     distance_matrix = [[0 for _ in range(num_files)] for _ in range(num_files)]
 
