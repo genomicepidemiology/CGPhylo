@@ -14,14 +14,17 @@ def print_distance_matrix_phylip(distance_matrix, file_names):
     num_files = len(file_names)
 
     # Print the number of files first
-    print(num_files)
+    print(f"{num_files}")
 
-    # Print each row of the distance matrix with the corresponding file name
+    # Print each row of the distance matrix in the specified format
     for i, row in enumerate(distance_matrix):
-        # Format the file name to have a fixed width for alignment
-        formatted_name = file_names[i].ljust(10)[:10]  # Adjust the length to 10 characters
-        distances = " ".join(f"{dist:.5f}" for dist in row)  # Format distances with a fixed decimal
-        print(f"{formatted_name} {distances}")
+        # Start with the file name
+        print(file_names[i], end='')
+
+        # Print the distances for the lower triangular matrix
+        for j in range(i):
+            print(f"\t{row[j]}", end='')
+        print()
 
 def calculate_pairwise_distances(sequences_dict):
     file_names = list(sequences_dict.keys())
