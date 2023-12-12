@@ -15,32 +15,28 @@ def mintyper2_pipeline():
     #print_distance_matrix(file_names, distance_matrix)
 
 def calculate_pairwise_distances(sequences_dict):
-    # Prepare a dictionary to hold the distance matrices for each gene
-    distance_matrices = {}
+    file_names = list(sequences_dict.keys())
+    num_files = len(file_names)
+    distance_matrix = [[0 for _ in range(num_files)] for _ in range(num_files)]
 
-    # Get all the genes (headers)
-    genes = list(next(iter(sequences_dict.values())).keys())
+    # Iterate over each pair of files
+    for i in range(num_files):
+        for j in range(i + 1, num_files):
+            count = 0  # Count of differences
 
-    # Initialize distance matrices for each gene
-    for gene in genes:
-        file_names = list(sequences_dict.keys())
-        num_files = len(file_names)
-        distance_matrices[gene] = [[0 for _ in range(num_files)] for _ in range(num_files)]
-
-    # Calculate distances for each gene
-    for gene in genes:
-        for i in range(len(file_names)):
-            for j in range(i + 1, len(file_names)):
+            # Compare each gene's sequences nucleotide by nucleotide
+            for gene in sequences_dict[file_names[i]].keys():
                 seq1 = sequences_dict[file_names[i]][gene]
                 seq2 = sequences_dict[file_names[j]][gene]
 
                 # Count differences
-                differences = sum(1 for a, b in zip(seq1, seq2) if a != b)
-                distance_matrices[gene][i][j] = differences
-                distance_matrices[gene][j][i] = differences  # Symmetric matrix
+                count += sum(1 for a, b in zip(seq1, seq2) if a != b)
 
-    return distance_matrices
+            # Store the count in the matrix
+            distance_matrix[i][j] = count
+            distance_matrix[j][i] = count  # Symmetric matrix
 
+    return distance_matrix
 def extract_sequences(directory, headers):
     sequences_dict = {}
 
