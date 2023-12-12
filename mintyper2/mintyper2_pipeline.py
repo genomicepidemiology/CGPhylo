@@ -14,6 +14,8 @@ def print_distance_matrix_phylip(distance_matrix, file_names):
     num_files = len(file_names)
 
     # Print the number of files first
+    print(num_files)
+
     # Print each row of the distance matrix with the corresponding file name
     for i, row in enumerate(distance_matrix):
         # Format the file name to have a fixed width for alignment
@@ -23,7 +25,6 @@ def print_distance_matrix_phylip(distance_matrix, file_names):
 
 def calculate_pairwise_distances(sequences_dict):
     file_names = list(sequences_dict.keys())
-    print (file_names)
     num_files = len(file_names)
     distance_matrix = [[0 for _ in range(num_files)] for _ in range(num_files)]
 
