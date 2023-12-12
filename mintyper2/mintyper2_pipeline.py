@@ -43,13 +43,13 @@ def calculate_pairwise_distances(sequences_dict):
 
                 diff = sum(1 for a, b in zip(seq1, seq2) if a != b)
 
-                if diff > 30:
-                    print ('-----')
-                    print (gene)
-                    print (seq1)
-                    print (seq2)
-                    print (diff)
-                    print ('-----')
+                #if diff > 30:
+                #    print ('-----')
+                #    print (gene)
+                #    print (seq1)
+                #    print (seq2)
+                #    print (diff)
+                #    print ('-----')
                 # Count differences
                 count += diff
 
