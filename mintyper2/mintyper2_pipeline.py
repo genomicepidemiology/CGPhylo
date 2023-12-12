@@ -6,13 +6,22 @@ def mintyper2_pipeline():
     gene_list = find_common_genes('/home/people/malhal/mintyper2/test/output_cpo_test')
     sequences_dict = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
     #Right now we ONLY use perfect length matches
+    distance_matrix, file_names = calculate_pairwise_distances(sequences_dict)
+    print_distance_matrix_phylip(distance_matrix, file_names)
 
-    distance_matrix = calculate_pairwise_distances(sequences_dict)
-    print (distance_matrix)
 
-    #file_names, sequences_list = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
-    #distance_matrix = calculate_distance_matrix(sequences_list)
-    #print_distance_matrix(file_names, distance_matrix)
+def print_distance_matrix_phylip(distance_matrix, file_names):
+    num_files = len(file_names)
+
+    # Print the number of files first
+    print(num_files)
+
+    # Print each row of the distance matrix with the corresponding file name
+    for i, row in enumerate(distance_matrix):
+        # Format the file name to have a fixed width for alignment
+        formatted_name = file_names[i].ljust(10)[:10]  # Adjust the length to 10 characters
+        distances = " ".join(f"{dist:.5f}" for dist in row)  # Format distances with a fixed decimal
+        print(f"{formatted_name} {distances}")
 
 def calculate_pairwise_distances(sequences_dict):
     file_names = list(sequences_dict.keys())
@@ -31,26 +40,14 @@ def calculate_pairwise_distances(sequences_dict):
                 seq2 = sequences_dict[file_names[j]][gene]
 
                 diff = sum(1 for a, b in zip(seq1, seq2) if a != b)
-
-                if diff > 300:
-                    print ('---------------------------------')
-                    print (gene)
-                    print (seq1)
-                    print (seq2)
-                    print (diff)
-                    print (len(seq1))
-                    print (len(seq2))
-                    print (seq1 == seq2)
-                    print('---------------------------------')
                 # Count differences
                 count += diff
-
 
             # Store the count in the matrix
             distance_matrix[i][j] = count
             distance_matrix[j][i] = count  # Symmetric matrix
 
-    return distance_matrix
+    return distance_matrix, file_names
 def extract_sequences(directory, headers):
     sequences_dict = {}
 
@@ -81,22 +78,6 @@ def extract_sequences(directory, headers):
 
     return sequences_dict
 
-def print_distance_matrix(file_names, distance_matrix):
-    # Find the maximum length of file names for formatting
-    max_name_length = max(len(name) for name in file_names)
-
-    # Print header row with file names
-    header = " " * (max_name_length + 3)  # Initial spacing for header row
-    for name in file_names:
-        header += f"{name:>{max_name_length}}  "
-    print(header)
-
-    # Print each row of the distance matrix with the corresponding file name
-    for i, row in enumerate(distance_matrix):
-        row_str = f"{file_names[i]:<{max_name_length}}: "
-        for dist in row:
-            row_str += f"{dist:>{max_name_length}}  "
-        print(row_str)
 def calculate_distance_matrix(sequences):
     num_sequences = len(sequences)
     distance_matrix = [[0 for _ in range(num_sequences)] for _ in range(num_sequences)]
