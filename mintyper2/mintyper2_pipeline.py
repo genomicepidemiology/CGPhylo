@@ -6,7 +6,9 @@ def mintyper2_pipeline():
     gene_list = find_common_genes('/home/people/malhal/mintyper2/test/output_cpo_test')
     gene_dict = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
     for key in gene_dict:
-        print (key, len(gene_dict[key]))
+        print (key)
+        for key2 in gene_dict[key]:
+            print (key2, gene_dict[key][key2])
     #Right now we ONLY use perfect length matches
 
     #file_names, sequences_list = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
