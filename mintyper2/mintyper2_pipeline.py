@@ -3,7 +3,7 @@ import sys
 
 def mintyper2_pipeline():
     #KMA ALIGnment
-    gene_list = find_common_genes('output_cpo_test')
+    gene_list = find_common_genes('/home/people/malhal/mintyper2/test/output_cpo_test')
     #Right now we ONLY use perfect length matches
     print (gene_list)
 
