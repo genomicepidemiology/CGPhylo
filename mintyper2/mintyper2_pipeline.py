@@ -16,7 +16,7 @@ def extract_sequences(directory, headers):
     # Loop through each file in the directory
     for file in os.listdir(directory):
         if file.endswith('.fsa'):
-            file_names.append(file)
+            file_names.append(file.split('.')[0])
             sequences = []
             with open(os.path.join(directory, file), 'r') as fsa_file:
                 lines = fsa_file.readlines()
