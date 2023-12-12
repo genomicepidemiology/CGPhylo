@@ -30,10 +30,14 @@ def calculate_pairwise_distances(sequences_dict):
                 seq1 = sequences_dict[file_names[i]][gene]
                 seq2 = sequences_dict[file_names[j]][gene]
                 if gene == 'b1818_len_801':
+                    print ('------------------')
                     print (seq1)
                     print (seq2)
+                    print (sum(1 for a, b in zip(seq1, seq2) if a != b))
+                    print('------------------')
                 # Count differences
                 count += sum(1 for a, b in zip(seq1, seq2) if a != b)
+
 
             # Store the count in the matrix
             distance_matrix[i][j] = count
