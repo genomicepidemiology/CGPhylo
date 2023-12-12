@@ -14,8 +14,6 @@ def print_distance_matrix_phylip(distance_matrix, file_names):
     num_files = len(file_names)
 
     # Print the number of files first
-    print(num_files)
-
     # Print each row of the distance matrix with the corresponding file name
     for i, row in enumerate(distance_matrix):
         # Format the file name to have a fixed width for alignment
