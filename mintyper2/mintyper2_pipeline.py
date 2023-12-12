@@ -49,7 +49,7 @@ def calculate_pairwise_distances(sequences_dict):
                     print (seq1)
                     print (seq2)
                     print (diff)
-                    print (len(seq1), len(seq2)
+                    print (len(seq1), len(seq2))
                     print ('-----')
                 # Count differences
                 count += diff
