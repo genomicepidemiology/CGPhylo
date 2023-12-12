@@ -4,16 +4,46 @@ import sys
 def mintyper2_pipeline():
     #KMA ALIGnment
     gene_list = find_common_genes('/home/people/malhal/mintyper2/test/output_cpo_test')
-    gene_dict = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
-    for key in gene_dict:
+    sequences_dict = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
+    for key in sequences_dict:
         print (key)
-        for key2 in gene_dict[key]:
-            print (key2, gene_dict[key][key2])
+        for key2 in sequences_dict[key]:
+            print (key2, sequences_dict[key][key2])
     #Right now we ONLY use perfect length matches
+
+    distance_matrix = calculate_pairwise_distances(sequences_dict)
+    print (distance_matrix)
 
     #file_names, sequences_list = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
     #distance_matrix = calculate_distance_matrix(sequences_list)
     #print_distance_matrix(file_names, distance_matrix)
+
+def calculate_pairwise_distances(sequences_dict):
+    # Prepare a dictionary to hold the distance matrices for each gene
+    distance_matrices = {}
+
+    # Get all the genes (headers)
+    genes = list(next(iter(sequences_dict.values())).keys())
+
+    # Initialize distance matrices for each gene
+    for gene in genes:
+        file_names = list(sequences_dict.keys())
+        num_files = len(file_names)
+        distance_matrices[gene] = [[0 for _ in range(num_files)] for _ in range(num_files)]
+
+    # Calculate distances for each gene
+    for gene in genes:
+        for i in range(len(file_names)):
+            for j in range(i + 1, len(file_names)):
+                seq1 = sequences_dict[file_names[i]][gene]
+                seq2 = sequences_dict[file_names[j]][gene]
+
+                # Count differences
+                differences = sum(1 for a, b in zip(seq1, seq2) if a != b)
+                distance_matrices[gene][i][j] = differences
+                distance_matrices[gene][j][i] = differences  # Symmetric matrix
+
+    return distance_matrices
 
 def extract_sequences(directory, headers):
     sequences_dict = {}
