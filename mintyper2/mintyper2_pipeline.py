@@ -5,7 +5,44 @@ def mintyper2_pipeline():
     #KMA ALIGnment
     gene_list = find_common_genes('/home/people/malhal/mintyper2/test/output_cpo_test')
     #Right now we ONLY use perfect length matches
-    print (gene_list)
+    file_names, sequences_list = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
+    print (len(file_names))
+    print ('seqs')
+    for item in sequences_list:
+        print (len(item))
+
+
+def extract_sequences(directory, headers):
+    file_names = []
+    sequences_list = []
+
+    # Loop through each file in the directory
+    for file in os.listdir(directory):
+        if file.endswith('.fsa'):
+            file_names.append(file)
+            sequences = []
+            with open(os.path.join(directory, file), 'r') as fsa_file:
+                lines = fsa_file.readlines()
+                current_sequence = ''
+                add_sequence = False
+
+                # Loop through each line in the file
+                for line in lines:
+                    if line.startswith('>'):
+                        if current_sequence and add_sequence:
+                            sequences.append(current_sequence)
+                        current_sequence = ''
+                        add_sequence = line.split()[0][1:] in headers
+                    elif add_sequence:
+                        current_sequence += line.strip()
+
+                # Add the last found sequence
+                if current_sequence and add_sequence:
+                    sequences.append(current_sequence)
+
+            sequences_list.append(sequences)
+
+    return file_names, sequences_list
 
 def load_fsa_gene_files(fsa_file):
     gene_dict = {}
