@@ -46,8 +46,6 @@ def calculate_pairwise_distances(sequences_dict):
                 if diff > 30:
                     print ('-----')
                     print (gene)
-                    print (seq1)
-                    print (seq2)
                     print (diff)
                     print (len(seq1), len(seq2))
                     print ('-----')
