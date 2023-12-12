@@ -6,8 +6,37 @@ def mintyper2_pipeline():
     gene_list = find_common_genes('/home/people/malhal/mintyper2/test/output_cpo_test')
     #Right now we ONLY use perfect length matches
     file_names, sequences_list = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
-    print (file_names)
+    distance_matrix = calculate_distance_matrix(sequences_list)
+    print_distance_matrix(file_names, distance_matrix)
+def print_distance_matrix(file_names, distance_matrix):
+    # Find the maximum length of file names for formatting
+    max_name_length = max(len(name) for name in file_names)
 
+    # Print header row with file names
+    header = " " * (max_name_length + 3)  # Initial spacing for header row
+    for name in file_names:
+        header += f"{name:>{max_name_length}}  "
+    print(header)
+
+    # Print each row of the distance matrix with the corresponding file name
+    for i, row in enumerate(distance_matrix):
+        row_str = f"{file_names[i]:<{max_name_length}}: "
+        for dist in row:
+            row_str += f"{dist:>{max_name_length}}  "
+        print(row_str)
+def calculate_distance_matrix(sequences):
+    num_sequences = len(sequences)
+    distance_matrix = [[0 for _ in range(num_sequences)] for _ in range(num_sequences)]
+
+    # Compare each sequence with every other sequence
+    for i in range(num_sequences):
+        for j in range(i + 1, num_sequences):
+            # Count differences in nucleotides at each position
+            differences = sum(1 for a, b in zip(sequences[i], sequences[j]) if a != b)
+            distance_matrix[i][j] = differences
+            distance_matrix[j][i] = differences  # Symmetric matrix
+
+    return distance_matrix
 
 def extract_sequences(directory, headers):
     file_names = []
@@ -31,7 +60,7 @@ def extract_sequences(directory, headers):
                         current_sequence = ''
                         add_sequence = line.split()[0][1:] in headers
                     elif add_sequence:
-                        current_sequence += line.strip()
+                        current_sequence += line.strip().upper()
 
                 # Add the last found sequence
                 if current_sequence and add_sequence:
