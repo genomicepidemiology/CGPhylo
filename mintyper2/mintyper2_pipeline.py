@@ -3,8 +3,8 @@ import sys
 
 def mintyper2_pipeline():
     #KMA ALIGnment
-    gene_list = find_common_genes('/home/people/malhal/mintyper2/test/201801')
-    sequences_dict = extract_sequences('/home/people/malhal/mintyper2/test/201801', gene_list)
+    gene_list = find_common_genes('/home/people/malhal/mintyper2/test/output_cpo_test')
+    sequences_dict = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
     for key in sequences_dict:
         print(key, len(sequences_dict[key]))
     #Right now we ONLY use perfect length matches
