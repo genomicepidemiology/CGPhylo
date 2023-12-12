@@ -5,6 +5,8 @@ def mintyper2_pipeline():
     #KMA ALIGnment
     gene_list = find_common_genes('/home/people/malhal/mintyper2/test/output_cpo_test')
     sequences_dict = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
+    for key in sequences_dict:
+        print(key, len(sequences_dict[key]))
     #Right now we ONLY use perfect length matches
     distance_matrix, file_names = calculate_pairwise_distances(sequences_dict)
     print_distance_matrix_phylip(distance_matrix, file_names)
@@ -42,13 +44,6 @@ def calculate_pairwise_distances(sequences_dict):
                 seq2 = sequences_dict[file_names[j]][gene]
 
                 diff = sum(1 for a, b in zip(seq1, seq2) if a != b)
-
-                if diff > 30:
-                    print ('-----')
-                    print (gene)
-                    print (diff)
-                    print (len(seq1), len(seq2))
-                    print ('-----')
                 # Count differences
                 count += diff
 
