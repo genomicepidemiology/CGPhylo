@@ -3,6 +3,7 @@ import sys
 
 def mintyper2_pipeline(args):
     """Main function"""
+    os.system('mkdir {}'.format(args.output)
     #Find species
     if args.nanopore != []:
         print (args.nanopore)
