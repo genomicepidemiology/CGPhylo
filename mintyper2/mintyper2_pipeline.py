@@ -154,7 +154,7 @@ def find_common_genes(directory_path):
             gene_lists.append(genes)
 
     for item in gene_lists:
-        print (len(item))
+        find_duplicates(item)
     sys.exit()
 
     # Find common genes
@@ -166,3 +166,16 @@ def find_common_genes(directory_path):
         print (len(common.intersection(item)))
 
     return common
+
+
+def find_duplicates(strings):
+    counts = {}
+    for string in strings:
+        if string in counts:
+            counts[string] += 1
+        else:
+            counts[string] = 1
+
+    for string, count in counts.items():
+        if count > 1:
+            print(f"'{string}' appears {count} times")
