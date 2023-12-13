@@ -145,12 +145,12 @@ def find_common_genes(directory_path):
     # Collect genes from each file
     for file in files:
         if file.endswith('.res'):
-            genes = []
+            genes = set()
             with open(os.path.join(directory_path, file), 'r') as f:
                 for line in f:
                     if not line.startswith('#'):
                         line = line.strip().split('\t')
-                        genes.append(line[0].split('_')[0].strip())
+                        genes.add(line[0].split('_')[0].strip())
             gene_lists.append(genes)
 
     # Find common genes
