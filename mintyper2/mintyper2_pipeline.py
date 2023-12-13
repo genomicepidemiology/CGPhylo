@@ -12,8 +12,8 @@ def mintyper2_pipeline(args):
             else:
                 name = file.split(' ')[0].split('/')[-1].split('.')[0]
             cmd = 'kma -i {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db -ID 50 -ont -md 5 -mct 0.5 -t 8 -mem_mode -ref_fsa'.format(file, args.output, name)
-            print (cmd)
-            #os.system(cmd)
+
+            os.system(cmd)
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
