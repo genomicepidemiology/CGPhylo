@@ -21,8 +21,12 @@ def mintyper2_pipeline(args):
             os.system(cmd)
     """
     gene_list, non_shared_genes = find_common_genes(args.output)
+
+    #Distance non_shared_genes
+    #Figure how many of the shared genes have same size.
     print (len(gene_list), 'genes shared between all samples')
-    print (len(non_shared_genes), 'genes not shared between all samples')
+    print (len(non_shared_genes), 'genes not shared between all sam ples')
+    find_common_genes_with_same_length(args.output, gene_list)
     sys.exit()
     for item in non_shared_genes[0:20]:
         print (item)
@@ -31,6 +35,36 @@ def mintyper2_pipeline(args):
         print(key, len(sequences_dict[key]))
     distance_matrix, file_names = calculate_pairwise_distances(sequences_dict)
     print_distance_matrix_phylip(distance_matrix, file_names, args.output)
+
+def find_common_genes_with_same_length(output, gene_list):
+    same_length_list = list()
+    files = os.listdir(output)
+
+
+    # Collect genes from each file
+    for file in files:
+        if file.endswith('.res'):
+            genes = set()
+            top_score_dict = dict()
+            with open(os.path.join(output, file), 'r') as f:
+                for line in f:
+                    if not line.startswith('#'):
+                        line = line.strip().split('\t')
+                        allele = line[0].split('_')[:-2]
+                        gene = '_'.join(allele)
+                        if gene in gene_list:
+                            if gene not in top_score_dict:
+                                top_score_dict[gene] = [line[0], line[1]]
+                            elif float(line[1]) > float(top_score_dict[gene][1]):
+                                top_score_dict[gene] = [line[0], line[1]]
+
+            for gene in top_score_dict:
+                genes.add(top_score_dict[gene][0])
+            same_length_list.append(genes)
+
+    for item in same_length_list:
+        print (len(item))
+    sys.exit()
 
 
 def print_distance_matrix_phylip(distance_matrix, file_names, output):
