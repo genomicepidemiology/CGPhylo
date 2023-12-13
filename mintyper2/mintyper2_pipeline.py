@@ -20,11 +20,10 @@ def mintyper2_pipeline(args):
             cmd = 'kma -i {} {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name)
             os.system(cmd)
     """
-    gene_list = find_common_genes(args.output)
-    print (gene_list)
+    gene_list, non_shared_genes = find_common_genes(args.output)
     print (len(gene_list), 'genes shared between all samples')
-    sys.exit()
     print (len(non_shared_genes), 'genes not shared between all samples')
+    sys.exit()
     for item in non_shared_genes[0:20]:
         print (item)
     sequences_dict = extract_sequences(args.output, gene_list)
@@ -157,17 +156,19 @@ def find_common_genes(directory_path):
             gene_lists.append(genes)
     for item in gene_lists:
         print (len(item))
-    sys.exit()
 
     # Find common genes
     common = set(gene_lists[0])
     for gene_list in gene_lists[1:]:
         common.intersection_update(gene_list)
 
-    for item in gene_list:
-        print (len(common.intersection(item)))
+    non_shared = set()
+    for gene_list in gene_lists:
+        for gene in gene_list:
+            if gene not in common:
+                non_shared.add(gene)
 
-    return common
+    return common, non_shared
 
 
 def find_duplicates(strings):
