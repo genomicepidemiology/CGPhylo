@@ -23,9 +23,9 @@ if __name__ == '__main__':
     # initialize the options parser
     parser = argparse.ArgumentParser('mintyper2', add_help=False)
 
-    parser.add_argument('--nanopore', action="store", type=str, default=[], nargs='+', dest="nanopore",
+    parser.add_argument('--nanopore', action="store", default=[], nargs='+', dest="nanopore",
                         help="Input (fastq)")
-    parser.add_argument('--illumina', action="store", type=str, default=[], nargs='+', dest="illumina",
+    parser.add_argument('--illumina', action="store", default=[], nargs='+', dest="illumina",
                         help="Input (fastq)")
     parser.add_argument('--output', action="store", type=str, default='output', dest="output",
                         help="Output directory")
