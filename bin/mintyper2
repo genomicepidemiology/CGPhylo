@@ -17,7 +17,7 @@ from src.version import __version__
 
 def main(args):
     """Main function"""
-    mintyper2_pipeline.mintyper2_pipeline()
+    mintyper2_pipeline.mintyper2_pipeline(args)
 
 if __name__ == '__main__':
     # initialize the options parser
@@ -27,6 +27,8 @@ if __name__ == '__main__':
                         help="Input (fastq)")
     parser.add_argument('--illumina', action="store", type=str, default=[], nargs='+', dest="illumina",
                         help="Input (fastq)")
+    parser.add_argument('--output', action="store", type=str, default='output', dest="output",
+                        help="Output directory")
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
     parser.add_argument('-h', '--help', action='help', help='Show this help message and exit')
 

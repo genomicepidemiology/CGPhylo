@@ -1,7 +1,17 @@
 import os
 import sys
 
-def mintyper2_pipeline():
+def mintyper2_pipeline(args):
+    """Main function"""
+    #Find species
+    if args.nanopore != []:
+        for file in args.nanopore:
+            if len(file.split(' ')) == 1:
+                name = file.split('/')[-1].split('.')[0]
+            else:
+                name = file.split(' ')[0].split('/')[-1].split('.')[0]
+            os.system('kma -i {} -o {} -t_db {}/{} -t 8 -dense -mem_mode -ref_fsa -ID 50 -ont -md 5 -eq 14 -mct 0.5'.format(file, args.output, name, args.db))
+    sys.exit()
     #KMA ALIGnment
     gene_list = find_common_genes('/home/people/malhal/mintyper2/test/output_cpo_test')
     sequences_dict = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
