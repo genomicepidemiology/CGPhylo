@@ -147,7 +147,7 @@ def find_common_genes(directory_path):
                 for line in f:
                     if not line.startswith('#'):
                         line = line.strip().split('\t')
-                        genes.append(line[0])
+                        genes.append(line[0].split('_')[0].strip())
             gene_lists.append(genes)
 
     # Find common genes
