@@ -5,6 +5,7 @@ def mintyper2_pipeline(args):
     """Main function"""
     os.system('mkdir {}'.format(args.output))
     #Find species
+    """
     if args.nanopore != []:
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
@@ -18,6 +19,7 @@ def mintyper2_pipeline(args):
             name = args.illumina[i].split('/')[-1].split('.')[0]
             cmd = 'kma -i {} {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name)
             os.system(cmd)
+    """
     gene_list = find_common_genes(args.output)
     print (gene_list)
     print (len(gene_list), 'genes shared between all samples')
@@ -148,7 +150,9 @@ def find_common_genes(directory_path):
                 for line in f:
                     if not line.startswith('#'):
                         line = line.strip().split('\t')
-                        genes.append(line[0].split('_')[0].strip())
+                        allele = line[0].split('_')[:-2]
+                        gene = '_'.join(allele)
+                        genes.append(gene)
             gene_lists.append(genes)
             find_duplicates(genes)
             print (file)
