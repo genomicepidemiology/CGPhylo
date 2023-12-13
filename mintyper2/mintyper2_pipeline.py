@@ -18,7 +18,7 @@ def mintyper2_pipeline(args):
         #Could we run multiple KMA alignments at once which 2 threads.
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
-            cmd = 'kma -i {} {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db -ID 50 -mct 0.5 -md 5 -mem_mode -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name)
+            cmd = 'kma -i {} {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db -ID 50 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name)
             os.system(cmd)
     #KMA ALIGnment
     gene_list = find_common_genes(args.output)
