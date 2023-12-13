@@ -5,6 +5,7 @@ def mintyper2_pipeline(args):
     """Main function"""
     os.system('mkdir {}'.format(args.output))
     #Find species
+    """
     if args.nanopore != []:
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
@@ -19,6 +20,7 @@ def mintyper2_pipeline(args):
             name = args.illumina[i].split('/')[-1].split('.')[0]
             cmd = 'kma -i {} {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db -ID 50 -mct 0.5 -md 5 -mem_mode -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name)
             os.system(cmd)
+    """
     #KMA ALIGnment
     gene_list = find_common_genes(args.output)
     sequences_dict = extract_sequences(args.output, gene_list)
