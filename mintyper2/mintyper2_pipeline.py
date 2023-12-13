@@ -22,8 +22,6 @@ def mintyper2_pipeline(args):
     """
     gene_list, non_shared_genes = find_common_genes(args.output)
     print (len(non_shared_genes), 'genes not shared between all samples')
-    for item in non_shared_genes:
-        print (item)
     sequences_dict = extract_sequences(args.output, gene_list)
     for key in sequences_dict:
         print(key, len(sequences_dict[key]))
@@ -155,9 +153,9 @@ def find_common_genes(directory_path):
         common = set(gene_lists[0])
         for gene_list in gene_lists[1:]:
             common.intersection_update(gene_list)
-        uncommun = set(gene_lists[0])
-        for gene_list in gene_lists[1:]:
-            uncommun.difference_update(gene_list)
-        return common, uncommun
+        left_overs = set()
+        for gene_list in gene_lists:
+            left_overs.update(set(gene_list) - common)
+        return common, left_overs
     else:
         return set()  # Return an empty set if no gene lists were found
