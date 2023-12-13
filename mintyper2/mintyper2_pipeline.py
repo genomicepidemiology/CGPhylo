@@ -22,6 +22,8 @@ def mintyper2_pipeline(args):
     """
     gene_list, non_shared_genes = find_common_genes(args.output)
     print (len(non_shared_genes), 'genes not shared between all samples')
+    for item in non_shared_genes:
+        print (item)
     sequences_dict = extract_sequences(args.output, gene_list)
     for key in sequences_dict:
         print(key, len(sequences_dict[key]))
