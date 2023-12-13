@@ -27,24 +27,26 @@ def mintyper2_pipeline(args):
         print(key, len(sequences_dict[key]))
     #Right now we ONLY use perfect length matches
     distance_matrix, file_names = calculate_pairwise_distances(sequences_dict)
-    print_distance_matrix_phylip(distance_matrix, file_names)
+    print_distance_matrix_phylip(distance_matrix, file_names, args.output)
 
 
-def print_distance_matrix_phylip(distance_matrix, file_names):
+def print_distance_matrix_phylip(distance_matrix, file_names, output):
     num_files = len(file_names)
+    with open(output + '/distance_matrix.phylip', 'w') as w:
 
-    # Print the number of files first
-    print(f"{num_files}")
 
-    # Print each row of the distance matrix in the specified format
-    for i, row in enumerate(distance_matrix):
-        # Start with the file name
-        print(file_names[i], end='')
+        # Print the number of files first
+        print(f"{num_files}", file=w)
 
-        # Print the distances for the lower triangular matrix
-        for j in range(i):
-            print(f"\t{row[j]}", end='')
-        print()
+        # Print each row of the distance matrix in the specified format
+        for i, row in enumerate(distance_matrix):
+            # Start with the file name
+            print(file_names[i], end='', file=w)
+
+            # Print the distances for the lower triangular matrix
+            for j in range(i):
+                print(f"\t{row[j]}", end='', file=w)
+            print(file=w)
 
 def calculate_pairwise_distances(sequences_dict):
     file_names = list(sequences_dict.keys())
