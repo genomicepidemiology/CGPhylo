@@ -152,9 +152,8 @@ def find_common_genes(directory_path):
                         line = line.strip().split('\t')
                         genes.append(line[0].split('_')[0].strip())
             gene_lists.append(genes)
-
-    for item in gene_lists:
-        find_duplicates(item)
+            find_duplicates(genes)
+            print (file)
     sys.exit()
 
     # Find common genes
