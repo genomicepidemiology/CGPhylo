@@ -5,6 +5,7 @@ def mintyper2_pipeline(args):
     """Main function"""
     #Find species
     if args.nanopore != []:
+        print (args.nanopore)
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
                 name = file.split('/')[-1].split('.')[0]
