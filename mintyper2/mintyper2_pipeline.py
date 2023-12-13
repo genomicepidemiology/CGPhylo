@@ -158,11 +158,14 @@ def find_common_genes(directory_path):
     common = set(gene_lists[0])
     for gene_list in gene_lists[1:]:
         common.intersection_update(gene_list)
+
     non_shared = set()
     for gene_list in gene_lists:
         for gene in gene_list:
             print (gene)
             if gene not in common:
                 non_shared.add(gene)
+            else:
+                print ('gene {} in common'.format(gene))
 
     return common, non_shared
