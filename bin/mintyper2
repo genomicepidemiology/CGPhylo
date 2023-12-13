@@ -29,6 +29,10 @@ if __name__ == '__main__':
                         help="Input (fastq)")
     parser.add_argument('--output', action="store", type=str, default='output', dest="output",
                         help="Output directory")
+    parser.add_argument('--db_dir', action="store", type=str, dest="db_dir",
+                        help="Directory containing bac_db and cgmlst_db")
+    parser.add_argument('--threads', action="store", type=int, default=1, dest="threads",
+                        help="Number of threads")
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
     parser.add_argument('-h', '--help', action='help', help='Show this help message and exit')
 
