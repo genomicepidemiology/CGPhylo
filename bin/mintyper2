@@ -23,10 +23,10 @@ if __name__ == '__main__':
     # initialize the options parser
     parser = argparse.ArgumentParser('mintyper2', add_help=False)
 
-    parser.add_argument('--nanopore', action="store", default=[], nargs='+', dest="nanopore",
-                        help="Input (fastq)")
-    parser.add_argument('--illumina', action="store", default=[], nargs='+', dest="illumina",
-                        help="Input (fastq)")
+    parser.add_argument('--illumina', action="store", type=str, dest='illumina', nargs="+",
+                        default=[], help='Illumina input files. Must be paired-end.')
+    parser.add_argument('--nanopore', action="store", type=str, dest='nanopore', nargs="+",
+                        default=[], help='Nanopore input files.')
     parser.add_argument('--output', action="store", type=str, default='output', dest="output",
                         help="Output directory")
     parser.add_argument('--db_dir', action="store", type=str, dest="db_dir",
