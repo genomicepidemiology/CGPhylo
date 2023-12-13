@@ -26,7 +26,9 @@ def mintyper2_pipeline(args):
     #Figure how many of the shared genes have same size.
     print (len(gene_list), 'genes shared between all samples')
     print (len(non_shared_genes), 'genes not shared between all sam ples')
-    find_common_genes_with_same_length(args.output, gene_list)
+    same_length_genes = find_common_genes_with_same_length(args.output, gene_list)
+    print (same_length_genes[0:10])
+    print (len(same_length_genes))
     sys.exit()
     for item in non_shared_genes[0:20]:
         print (item)
@@ -62,9 +64,11 @@ def find_common_genes_with_same_length(output, gene_list):
                 genes.add(top_score_dict[gene][0])
             same_length_list.append(genes)
 
-    for item in same_length_list:
-        print (len(item))
-    sys.exit()
+    # Find common genes
+    common = set(same_length_list[0])
+    for gene_list in same_length_list[1:]:
+        common.intersection_update(gene_list)
+    return common
 
 
 def print_distance_matrix_phylip(distance_matrix, file_names, output):
