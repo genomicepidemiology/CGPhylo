@@ -145,17 +145,19 @@ def find_common_genes(directory_path):
     # Collect genes from each file
     for file in files:
         if file.endswith('.res'):
-            genes = list()
+            genes = set()
             with open(os.path.join(directory_path, file), 'r') as f:
                 for line in f:
                     if not line.startswith('#'):
                         line = line.strip().split('\t')
                         allele = line[0].split('_')[:-2]
                         gene = '_'.join(allele)
-                        genes.append(gene)
+                        genes.add(gene)
+
+
             gene_lists.append(genes)
-            find_duplicates(genes)
-            print (file)
+    for item in gene_lists:
+        print (len(gene_lists))
     sys.exit()
 
     # Find common genes
@@ -171,6 +173,8 @@ def find_common_genes(directory_path):
 
 def find_duplicates(strings):
     counts = {}
+    duplicates = []
+
     for string in strings:
         if string in counts:
             counts[string] += 1
@@ -179,4 +183,6 @@ def find_duplicates(strings):
 
     for string, count in counts.items():
         if count > 1:
-            print(f"'{string}' appears {count} times")
+            duplicates.append(string)
+
+    return duplicates
