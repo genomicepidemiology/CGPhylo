@@ -20,10 +20,9 @@ def mintyper2_pipeline(args):
             cmd = 'kma -i {} {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db -ID 50 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name)
             os.system(cmd)
     """
-    gene_list = find_common_genes(args.output)
-    print (gene_list)
-
+    gene_list, non_shared = find_common_genes(args.output)
     print (len(gene_list), 'genes shared between all samples')
+    print (len(non_shared), 'genes not shared between all samples')
     sys.exit()
     print (len(non_shared_genes), 'genes not shared between all samples')
     for item in non_shared_genes[0:20]:
@@ -159,6 +158,12 @@ def find_common_genes(directory_path):
         common = set(gene_lists[0])
         for gene_list in gene_lists[1:]:
             common.intersection_update(gene_list)
-        return common
+        non_shared = set()
+        for gene_list in gene_lists:
+            for gene in gene_list:
+                if gene not in common:
+                    non_shared.add(gene)
+
+        return common, non_shared
     else:
         return set()  # Return an empty set if no gene lists were found
