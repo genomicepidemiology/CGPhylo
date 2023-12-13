@@ -64,6 +64,10 @@ def calculate_pairwise_distances(sequences_dict):
 
                 # Modified comparison to skip lowercase nucleotides
                 diff = sum(1 for a, b in zip(seq1, seq2) if a != b and not (a.islower() or b.islower()))
+
+                if diff > 200:
+                    print(f"Warning: {gene} has {diff} differences between {file_names[i]} and {file_names[j]}")
+                    print (len(seq1), len(seq2))
                 # Count differences
                 count += diff
 
