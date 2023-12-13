@@ -19,10 +19,9 @@ def mintyper2_pipeline(args):
             name = args.illumina[i].split('/')[-1].split('.')[0]
             cmd = 'kma -i {} {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db -ID 50 -mct 0.5 -md 5 -mem_mode -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name)
             os.system(cmd)
-    sys.exit()
     #KMA ALIGnment
-    gene_list = find_common_genes('/home/people/malhal/mintyper2/test/output_cpo_test')
-    sequences_dict = extract_sequences('/home/people/malhal/mintyper2/test/output_cpo_test', gene_list)
+    gene_list = find_common_genes(args.output)
+    sequences_dict = extract_sequences(args.output, gene_list)
     for key in sequences_dict:
         print(key, len(sequences_dict[key]))
     #Right now we ONLY use perfect length matches
