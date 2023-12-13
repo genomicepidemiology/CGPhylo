@@ -154,10 +154,9 @@ def find_common_genes(directory_path):
                         gene = '_'.join(allele)
                         genes.add(gene)
 
-
             gene_lists.append(genes)
     for item in gene_lists:
-        print (len(gene_lists))
+        print (len(item))
     sys.exit()
 
     # Find common genes
