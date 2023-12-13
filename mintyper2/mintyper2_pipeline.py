@@ -153,6 +153,10 @@ def find_common_genes(directory_path):
                         genes.add(line[0].split('_')[0].strip())
             gene_lists.append(genes)
 
+    for item in gene_lists:
+        print (len(item))
+    sys.exit()
+
     # Find common genes
     common = set(gene_lists[0])
     for gene_list in gene_lists[1:]:
