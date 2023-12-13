@@ -12,9 +12,7 @@ def mintyper2_pipeline(args):
             else:
                 name = file.split(' ')[0].split('/')[-1].split('.')[0]
             cmd = 'kma -i {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db -ID 50 -md 5 -mct 0.5 -t 8 -mem_mode -ref_fsa -ont'.format(file, args.output, name)
-            #os.system(cmd)
-            print (cmd)
-    sys.exit()
+            os.system(cmd)
     if args.illumina != []:
         #Look into if we can parallelize this.
         #Could we run multiple KMA alignments at once which 2 threads.
