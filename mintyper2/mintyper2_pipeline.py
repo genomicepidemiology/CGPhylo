@@ -71,9 +71,9 @@ def find_common_genes_with_same_length(output, gene_list):
 
     genes_to_reajust = set()
     for gene_list in same_length_list:
-        for alelle in gene_list:
+        for allele in gene_list:
             if allele not in common:
-                gene = '_'.join(alelle.split('_')[:-2])
+                gene = '_'.join(allele.split('_')[:-2])
                 genes_to_reajust.add(gene)
 
     return list(common), list(genes_to_reajust)
