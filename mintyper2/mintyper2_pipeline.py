@@ -68,7 +68,8 @@ def find_common_genes_with_same_length(output, gene_list):
     common = set(same_length_list[0])
     for gene_list in same_length_list[1:]:
         common.intersection_update(gene_list)
-    return common
+
+    return list(common)
 
 
 def print_distance_matrix_phylip(distance_matrix, file_names, output):
