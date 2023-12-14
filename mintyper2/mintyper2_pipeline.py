@@ -53,11 +53,12 @@ def find_lengths_of_genes_to_readjust(output, genes_to_readjust):
                         gene = '_'.join(allele)
                         if gene in genes_to_readjust:
                             if gene not in gene_dict:
-                                gene_dict[gene] = [line[0]]
+                                gene_dict[gene] = set()
+                                gene_dict[gene].add(line[0])
                             else:
-                                gene_dict[gene].append(line[0])
+                                gene_dict[gene].add(line[0])
     for gene in gene_dict:
-        print (gene, len(gene_dict[gene]))
+        print (gene, gene_dict[gene])
     sys.exit()
 
 def find_common_genes_with_same_length(output, gene_list):
