@@ -1,5 +1,6 @@
 from Bio import SeqIO, Align
 from Bio.Align import PairwiseAligner
+import json
 
 def align_sequences(seq_a, seq_b):
     aligner = PairwiseAligner()
@@ -75,9 +76,10 @@ def find_gap_strings(fasta_file):
     return gene_alignments
 
 
-# Usage example
 gene_alignments = find_gap_strings("consensus_genes_2.fasta")
 
-for gene in gene_alignments:
-    if gene_alignments[gene] != {}:
-        print (gene, gene_alignments[gene])
+# Convert to JSON and save to a file
+with open('gap_map.json', 'w') as outfile:
+    json.dump(gene_alignments, outfile, indent=4)
+
+print("Alignment data saved to gene_alignments.json")
