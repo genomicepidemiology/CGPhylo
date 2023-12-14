@@ -56,9 +56,6 @@ def find_gap_strings(fasta_file):
         if gene_name not in longest_seqs or len(seq) > len(longest_seqs[gene_name][1]):
             longest_seqs[gene_name] = (header, seq)
 
-    print (longest_seqs['b3229'])
-    print(longest_seqs['b3229'])
-
     for item in longest_seqs:
         gene_alignments[item] = {}
 
@@ -71,6 +68,8 @@ def find_gap_strings(fasta_file):
 
         if header != longest_seq_header:
             gap_positions_a, gap_positions_b = align_sequences(longest_seq, seq)
+            print (longest_seq_header)
+            print (gene_alignments)
             gene_alignments[longest_seq_header][header] = [gap_positions_a, gap_positions_b]
 
     return gene_alignments
