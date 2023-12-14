@@ -57,7 +57,7 @@ def find_gap_strings(fasta_file):
             longest_seqs[gene_name] = (header, seq)
 
     for item in longest_seqs:
-        gene_alignments[item] = {}
+        gene_alignments[longest_seqs[item][0]] = {}
 
     # Align each sequence to the longest one of the same gene
     for header, seq_record in sequences.items():
