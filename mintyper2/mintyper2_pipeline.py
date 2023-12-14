@@ -29,6 +29,8 @@ def mintyper2_pipeline(args):
     same_length_genes, genes_to_readjust = find_common_genes_with_same_length(args.output, gene_list)
     print (len(same_length_genes))
     print (len(genes_to_readjust))
+    find_lengths_of_genes_to_readjust(args.output, genes_to_readjust)
+    #genes_to_readjust holds the identifier for the genes that need to be readjusted. Look up the top scorer and realign.
     sys.exit()
     for item in non_shared_genes[0:20]:
         print (item)
@@ -37,6 +39,25 @@ def mintyper2_pipeline(args):
         print(key, len(sequences_dict[key]))
     distance_matrix, file_names = calculate_pairwise_distances(sequences_dict)
     print_distance_matrix_phylip(distance_matrix, file_names, args.output)
+
+def find_lengths_of_genes_to_readjust(output, genes_to_readjust):
+    gene_dict = dict()
+    files = os.listdir(output)
+    for file in files:
+        if file.endswith('.res'):
+                for line in f:
+                    if not line.startswith('#'):
+                        line = line.strip().split('\t')
+                        allele = line[0].split('_')[:-2]
+                        gene = '_'.join(allele)
+                        if gene in genes_to_readjust:
+                            if gene not in gene_dict:
+                                gene_dict[gene] = [line[0]]
+                            else:
+                                gene_dict[gene].append(line[0])
+    for gene in gene_dict:
+        print (gene, len(gene_dict[gene]))
+    sys.exit()
 
 def find_common_genes_with_same_length(output, gene_list):
     same_length_list = list()
