@@ -16,10 +16,6 @@ def align_sequences(fasta_file):
         if gene_name not in longest_seqs or len(seq) > len(longest_seqs[gene_name]):
             longest_seqs[gene_name] = seq
 
-    for item in longest_seqs:
-        print (item, len(longest_seqs[item]))
-    sys.exit()
-
     # Step 3: Align each sequence to the longest one of the same gene
     aligner = PairwiseAligner()
     aligner.mode = 'global'
@@ -40,3 +36,9 @@ def align_sequences(fasta_file):
 
 # Usage
 gene_alignments = align_sequences("consensus_genes.fasta")
+
+for item in gene_alignments:
+    print(item)
+    for item2 in gene_alignments[item]:
+        print(item2, gene_alignments[item][item2])
+    print('\n')
