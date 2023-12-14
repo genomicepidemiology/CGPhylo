@@ -29,6 +29,7 @@ def align_sequences(fasta_file):
 
         if header != longest_seq_header:
             alignment = aligner.align(longest_seq, seq)
+            print (alignment)
             # Step 4: Generate CIGAR string
             cigar = alignment[0].cigar
             # Step 5: Store in a nested dictionary
