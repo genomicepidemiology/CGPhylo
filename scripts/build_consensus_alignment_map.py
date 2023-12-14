@@ -58,7 +58,7 @@ def create_cigar_string(alignment):
 # gene_alignments = align_sequences("path_to_your_fasta_file.fasta")
 
 # Usage
-gene_alignments = align_sequences("consensus_genes.fasta")
+gene_alignments = align_sequences("consensus_genes_2.fasta")
 
 for item in gene_alignments:
     print(item)
