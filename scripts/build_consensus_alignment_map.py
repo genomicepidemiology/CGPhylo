@@ -72,7 +72,7 @@ def find_gap_strings(fasta_file):
 
 
 # Usage example
-gene_alignments = align_sequences("consensus_genes_2.fasta")
+gene_alignments = find_gap_strings("consensus_genes_2.fasta")
 
 for gene in gene_alignments:
     print (gene)
