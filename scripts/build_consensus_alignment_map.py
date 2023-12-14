@@ -19,6 +19,7 @@ def align_sequences(fasta_file):
 
     # Align each sequence to the longest one of the same gene
     for header, seq_record in sequences.items():
+        print (len(gene_alignments))
         gene_name = header.split('_')[0]
         seq = str(seq_record.seq)
         longest_seq_header, longest_seq = longest_seqs[gene_name]
