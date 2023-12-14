@@ -22,59 +22,35 @@ def find_gap_positions(aligned_sequence):
             gap_positions.append(str(i))
     return ','.join(gap_positions)
 
-
-def recreate_alignment(seq, gap_string):
-    if not gap_string:
-        return seq
-    result = []
-    gap_positions = set(map(int, gap_string.split(',')))
-    for i, char in enumerate(seq):
-        if i in gap_positions:
-            result.append('-')
-        result.append(char)
-    return ''.join(result)
-
-def recreate_alignment(seq, gap_string):
-    if not gap_string:
-        return seq
-    result = []
-    gap_positions = set(map(int, gap_string.split(',')))
-    for i, char in enumerate(seq):
-        if i in gap_positions:
-            result.append('-')
-        result.append(char)
-    return ''.join(result)
-
 def find_gap_strings(fasta_file):
     sequences = SeqIO.to_dict(SeqIO.parse(fasta_file, "fasta"))
-    longest_seqs = {}
+    gene_sequences = {}
+
+    # Group sequences by gene name
+    for header, seq_record in sequences.items():
+        gene_name = header.split('_')[0]
+        if gene_name not in gene_sequences:
+            gene_sequences[gene_name] = []
+        gene_sequences[gene_name].append((header, str(seq_record.seq)))
+
+    print (len(gene_sequences))
+    sys.exit()
+
     gene_alignments = {}
 
-    # Find the longest sequence for each gene
-    for header, seq_record in sequences.items():
-        gene_name = header.split('_')[0]
-        seq = str(seq_record.seq)
-        if gene_name not in longest_seqs or len(seq) > len(longest_seqs[gene_name][1]):
-            longest_seqs[gene_name] = (header, seq)
-
-    for item in longest_seqs:
-        gene_alignments[longest_seqs[item][0]] = {}
-
-    t = 0
-    # Align each sequence to the longest one of the same gene
-    for header, seq_record in sequences.items():
-        gene_name = header.split('_')[0]
-        seq = str(seq_record.seq)
-        longest_seq_header, longest_seq = longest_seqs[gene_name]
-        if header != longest_seq_header:
-            gap_positions_a, gap_positions_b = align_sequences(longest_seq, seq)
-            a_gaps = find_gap_positions(gap_positions_a)
-            b_gaps = find_gap_positions(gap_positions_b)
-            gene_alignments[longest_seq_header][header] = [a_gaps, b_gaps]
-
+    # Align each sequence with every other sequence of the same gene
+    for gene_name, gene_seqs in gene_sequences.items():
+        for header_a, seq_a in gene_seqs:
+            for header_b, seq_b in gene_seqs:
+                if header_a != header_b:
+                    if header_a not in gene_alignments:
+                        gene_alignments[header_a] = {}
+                    gap_positions_a, gap_positions_b = align_sequences(seq_a, seq_b)
+                    a_gaps = find_gap_positions(gap_positions_a)
+                    b_gaps = find_gap_positions(gap_positions_b)
+                    gene_alignments[header_a][header_b] = [a_gaps, b_gaps]
 
     return gene_alignments
-
 
 gene_alignments = find_gap_strings("consensus_genes_2.fasta")
 
