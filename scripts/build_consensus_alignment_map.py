@@ -28,7 +28,7 @@ def align_sequences(fasta_file):
             cigar = create_cigar_string(best_alignment)
 
             # Print the alignment
-            print(f"Alignment between {longest_seq_header} and {header}:\n{best_alignment}")
+            #print(f"Alignment between {longest_seq_header} and {header}:\n{best_alignment}")
 
             if gene_name not in gene_alignments:
                 gene_alignments[gene_name] = {}
@@ -37,27 +37,32 @@ def align_sequences(fasta_file):
     return gene_alignments
 
 def create_cigar_string(alignment):
-    cigar = []
-    match_count = 0
-    last_end = 0
+    gicar = []  # GICAR string to store only gap information
+    ref_pos, query_pos = 0, 0  # Initialize reference and query positions
 
     for aligned_pairs in zip(*alignment.aligned):
         for start, end in zip(*aligned_pairs):
-            if start > last_end:
-                cigar.append(f"{start - last_end}I")  # Insertion
-            cigar.append(f"{end - start}M")  # Match/Mismatch
-            last_end = end
+            ref_gap = start - ref_pos
+            query_gap = start - query_pos
+            if ref_gap > 0:
+                gicar.append(f"{ref_gap}D")  # Deletion in query
+            if query_gap > 0:
+                gicar.append(f"{query_gap}I")  # Insertion in target
+            ref_pos = end
+            query_pos = end
 
-    # Check for trailing insertions
-    if len(alignment.target) > last_end:
-        cigar.append(f"{len(alignment.target) - last_end}I")
+    # Check for trailing gaps
+    if len(alignment.target) > ref_pos:
+        gicar.append(f"{len(alignment.target) - ref_pos}D")
+    if len(alignment.query) > query_pos:
+        gicar.append(f"{len(alignment.query) - query_pos}I")
 
-    return "".join(cigar)
+    return "".join(gicar)
+
 
 # Usage example
 gene_alignments = align_sequences("consensus_genes_2.fasta")
 
-sys.exit()
 for gene in gene_alignments:
     print(f"Gene: {gene}")
     for allele in gene_alignments[gene]:
