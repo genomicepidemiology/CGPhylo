@@ -79,6 +79,9 @@ def find_gap_strings(fasta_file):
 # Usage example
 gene_alignments = find_gap_strings("consensus_genes_2.fasta")
 
+t = 0
 for gene in gene_alignments:
     if gene_alignments[gene] != {}:
         print (gene, gene_alignments[gene])
+        t += 1
+print (t)
