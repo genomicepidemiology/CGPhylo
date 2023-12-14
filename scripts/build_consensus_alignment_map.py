@@ -47,6 +47,7 @@ def recreate_alignment(seq, gap_string):
 def find_gap_strings(fasta_file):
     sequences = SeqIO.to_dict(SeqIO.parse(fasta_file, "fasta"))
     longest_seqs = {}
+    gene_alignments = {}
 
     # Find the longest sequence for each gene
     for header, seq_record in sequences.items():
@@ -54,6 +55,9 @@ def find_gap_strings(fasta_file):
         seq = str(seq_record.seq)
         if gene_name not in longest_seqs or len(seq) > len(longest_seqs[gene_name][1]):
             longest_seqs[gene_name] = (header, seq)
+
+    for item in longest_seqs:
+        gene_alignments[item] = {}
 
     # Align each sequence to the longest one of the same gene
     for header, seq_record in sequences.items():
@@ -63,10 +67,7 @@ def find_gap_strings(fasta_file):
 
         if header != longest_seq_header:
             gap_positions_a, gap_positions_b = align_sequences(longest_seq, seq)
-
-            if gene_name not in gene_alignments:
-                gene_alignments[gene_name] = {}
-            gene_alignments[gene_name][header] = [gap_positions_a, gap_positions_b]
+            gene_alignments[longest_seq_header][header] = [gap_positions_a, gap_positions_b]
 
     return gene_alignments
 
