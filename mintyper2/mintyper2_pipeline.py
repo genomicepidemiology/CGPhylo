@@ -45,6 +45,7 @@ def find_lengths_of_genes_to_readjust(output, genes_to_readjust):
     files = os.listdir(output)
     for file in files:
         if file.endswith('.res'):
+            with open(os.path.join(output, file), 'r') as f:
                 for line in f:
                     if not line.startswith('#'):
                         line = line.strip().split('\t')
