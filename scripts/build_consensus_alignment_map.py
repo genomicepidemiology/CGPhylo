@@ -34,22 +34,25 @@ def align_sequences(fasta_file):
 
     return gene_alignments
 
-
 def create_cigar_string(alignment):
     cigar = []
     match_count = 0
-    for (start, end) in zip(*alignment.aligned):
-        if match_count:
-            cigar.append(f"{match_count}M")
-            match_count = 0
-        gap_start, gap_end = start if alignment.target_start <= alignment.query_start else end
-        gap_length = gap_end - gap_start
-        if gap_length:
-            cigar.append(f"{gap_length}{'I' if alignment.target_start <= alignment.query_start else 'D'}")
-    if match_count:
-        cigar.append(f"{match_count}M")
-    return "".join(cigar)
+    gap_count = 0
+    for start, end in zip(*alignment.aligned):
+        if start - match_count > 0:
+            if gap_count:
+                cigar.append(f"{gap_count}I")
+                gap_count = 0
+            cigar.append(f"{start - match_count}M")
+        gap_count += end - start
+        match_count = end
 
+    if gap_count:
+        cigar.append(f"{gap_count}I")
+    if len(alignment.query) > match_count:
+        cigar.append(f"{len(alignment.query) - match_count}M")
+
+    return "".join(cigar)
 
 # Usage
 # gene_alignments = align_sequences("path_to_your_fasta_file.fasta")
