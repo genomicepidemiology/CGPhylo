@@ -55,7 +55,7 @@ def create_cigar_string(alignment):
     return "".join(cigar)
 
 # Usage example
-gene_alignments = align_sequences("consensus_genes_db_2.fasta")
+gene_alignments = align_sequences("consensus_genes_2.fasta")
 
 for gene in gene_alignments:
     print(f"Gene: {gene}")
