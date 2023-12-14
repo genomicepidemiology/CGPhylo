@@ -80,4 +80,5 @@ def find_gap_strings(fasta_file):
 gene_alignments = find_gap_strings("consensus_genes_2.fasta")
 
 for gene in gene_alignments:
-    print (gene, gene_alignments[gene])
+    if gene_alignments[gene] != {}:
+        print (gene, gene_alignments[gene])
