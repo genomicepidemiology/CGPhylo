@@ -65,5 +65,6 @@ gene_alignments = align_sequences("consensus_genes_2.fasta")
 
 for gene in gene_alignments:
     print(f"Gene: {gene}")
-    for allele in gene_alignments[gene]:
-        print(f"  {allele}: {gene_alignments[gene][allele]}")
+    if len(gene_alignments[gene]) > 1:
+        for allele in gene_alignments[gene]:
+            print(f"  {allele}: {gene_alignments[gene][allele]}")
