@@ -173,9 +173,9 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
                 if len(seq1) != len(seq2):
                     allele_1 = sequences_dict[file_names[i]][gene][0]
                     allele_2 = sequences_dict[file_names[j]][gene][0]
+                    for item in gap_map:
+                        print (item, gap_map[item])
                     print (len(gap_map))
-                    print (gap_map['b4044_len_1383'])
-                    print (gap_map['b4044_len_1380'])
                     print (allele_1, allele_2)
                     print (gap_map[allele_1])
                     #CONTINUE HERE
