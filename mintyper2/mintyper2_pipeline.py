@@ -192,6 +192,7 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
                 # Modified comparison to skip lowercase nucleotides
                 diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if a != b and not (a.islower() or b.islower()))
 
+                print (diff, len(realigned_seq1))
                 # Count differences
                 count += diff
 
