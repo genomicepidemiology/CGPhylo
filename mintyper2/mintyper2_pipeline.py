@@ -4,9 +4,7 @@ import json
 def mintyper2_pipeline(args):
     """Main function"""
     os.system('mkdir {}'.format(args.output))
-    #Find species
-    """
-
+    #Find species and load database
     if args.nanopore != []:
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
@@ -20,23 +18,13 @@ def mintyper2_pipeline(args):
             name = args.illumina[i].split('/')[-1].split('.')[0]
             cmd = 'kma -i {} {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db_2 -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name)
             os.system(cmd)
-    """
     gene_list, non_shared_genes = find_common_genes(args.output)
-
-    #Distance non_shared_genes
-    #Figure how many of the shared genes have same size.
-    print (len(gene_list), 'genes shared between all samples')
-    print (len(non_shared_genes), 'genes not shared between all sam ples')
-    #same_length_genes, genes_to_readjust = find_common_genes_with_same_length(args.output, gene_list)
-    #print (len(same_length_genes))
-    #print ('genes to fix', len(genes_to_readjust))
-    #find_lengths_of_genes_to_readjust(args.output, genes_to_readjust)
-    #genes_to_readjust holds the identifier for the genes that need to be readjusted. Look up the top scorer and realign.
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     file_path = '/home/people/malhal/mintyper2/gap_map.json'
     gap_map = load_json(file_path)
-    distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict, gap_map)
+    distance_matrix, file_names, total_length = calculate_pairwise_distances(file_sequences_dict, gap_map)
     print_distance_matrix_phylip(distance_matrix, file_names, args.output)
+    print ("Total length: {}".format(total_length))
 
 def load_json(file_path):
     with open(file_path, 'r') as file:
@@ -159,7 +147,11 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
     file_names = list(sequences_dict.keys())
     num_files = len(file_names)
     distance_matrix = [[0 for _ in range(num_files)] for _ in range(num_files)]
-
+    total_length = 0
+    for file in sequences_dict:
+        for gene in sequences_dict[file]:
+            total_length += len(sequences_dict[file][gene][1])
+        break # Only need to do this once
     # Iterate over each pair of files
     for i in range(num_files):
         for j in range(i + 1, num_files):
@@ -195,7 +187,7 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
             distance_matrix[i][j] = count
             distance_matrix[j][i] = count  # Symmetric matrix
 
-    return distance_matrix, file_names
+    return distance_matrix, file_names, total_length
 
 def find_common_genes(directory_path):
     files = os.listdir(directory_path)
