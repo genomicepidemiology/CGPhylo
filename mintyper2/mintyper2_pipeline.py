@@ -55,7 +55,7 @@ def load_sequences_from_file(output, gene_list):
                         gene = line[1:].split('_')[0]
                         if gene in gene_list:
                             file_sequences_dict[name][allele] = ''
-                    else:
+                    if gene != None and gene in gene_list and not line.startswith('>'):
                         file_sequences_dict[name][allele] += line.strip()
     return file_sequences_dict
 
