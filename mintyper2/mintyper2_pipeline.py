@@ -25,7 +25,7 @@ def mintyper2_pipeline(args):
     file_path = '/home/people/malhal/mintyper2/gap_map.json'
     gap_map = load_json(file_path)
     distance_matrix, file_names, total_length = calculate_pairwise_distances(file_sequences_dict, gap_map)
-    print_distance_matrix_phylip(distance_matrix, file_names, args.output)
+    print_distance_matrix_phylip(distance_matrix, file_names, args.output, total_length)
     print ("Total length: {}".format(total_length))
 
 def load_json(file_path):
@@ -127,7 +127,8 @@ def find_common_genes_with_same_length(output, gene_list):
     return list(common), list(genes_to_reajust)
 
 
-def print_distance_matrix_phylip(distance_matrix, file_names, output):
+def print_distance_matrix_phylip(distance_matrix, file_names, output, total_length):
+    normalization_factor = 1000000 / total_length
     num_files = len(file_names)
     with open(output + '/distance_matrix.phylip', 'w') as w:
 
@@ -142,7 +143,7 @@ def print_distance_matrix_phylip(distance_matrix, file_names, output):
 
             # Print the distances for the lower triangular matrix
             for j in range(i):
-                print(f"\t{row[j]}", end='', file=w)
+                print(f"\t{int(row[j])*normalization_factor}", end='', file=w)
             print(file=w)
 
 def calculate_pairwise_distances(sequences_dict, gap_map):
