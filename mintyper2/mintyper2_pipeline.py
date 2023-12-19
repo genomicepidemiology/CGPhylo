@@ -26,7 +26,6 @@ def mintyper2_pipeline(args):
     gap_map = load_json(file_path)
     distance_matrix, file_names, total_length = calculate_pairwise_distances(file_sequences_dict, gap_map)
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, total_length)
-    print ("Total length: {}".format(total_length))
 
 def load_json(file_path):
     with open(file_path, 'r') as file:
@@ -54,26 +53,6 @@ def load_sequences_from_file(output, gene_list):
 
 
 
-def find_lengths_of_genes_to_readjust(output, genes_to_readjust):
-    file_gene_dict = dict()
-    gene_dict = dict()
-    files = os.listdir(output)
-    for file in files:
-        if file.endswith('.res'):
-            name = file.split('.')[0]
-            file_gene_dict[name] = dict()
-            with open(os.path.join(output, file), 'r') as f:
-                for line in f:
-                    if not line.startswith('#'):
-                        line = line.strip().split('\t')
-                        allele = line[0].split('_')[:-2]
-                        gene = '_'.join(allele)
-                        if gene in genes_to_readjust:
-                            if gene not in gene_dict:
-                                file_gene_dict[name][gene] = line[0]
-    for gene in gene_dict:
-        print (gene, gene_dict[gene])
-    sys.exit()
 def recreate_alignment(seq, gap_string):
     if not gap_string:
         return seq
@@ -210,8 +189,6 @@ def find_common_genes(directory_path):
                         genes.add(gene)
 
             gene_lists.append(genes)
-    for item in gene_lists:
-        print (len(item))
 
     # Find common genes
     common = set(gene_lists[0])
