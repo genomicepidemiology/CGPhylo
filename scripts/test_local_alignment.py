@@ -1,14 +1,6 @@
 from Bio import Align
 from Bio.Align import PairwiseAligner
 
-def align_sequences(seq_a, seq_b):
-    aligner = PairwiseAligner()
-    aligner.mode = 'local'  # Use local alignment
-    alignments = aligner.align(seq_a, seq_b)
-    best_alignment = alignments[0]
-    print("Alignment:\n", best_alignment)  # Print the alignment
-    return alignments[0]  # Return the best alignment
-
 def extract_gap_positions(alignment):
     seqs_alignment = alignment.format()
 
