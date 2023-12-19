@@ -122,7 +122,7 @@ def print_distance_matrix_phylip(distance_matrix, file_names, output, total_leng
 
             # Print the distances for the lower triangular matrix
             for j in range(i):
-                print(f"\t{int(row[j])*normalization_factor}", end='', file=w)
+                print(f"\t{round(int(row[j]) * normalization_factor, 2)}", end='', file=w)
             print(file=w)
 
 def calculate_pairwise_distances(sequences_dict, gap_map):
