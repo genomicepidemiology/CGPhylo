@@ -1,6 +1,6 @@
 import os
 import sys
-
+import json
 def mintyper2_pipeline(args):
     """Main function"""
     os.system('mkdir {}'.format(args.output))
@@ -32,13 +32,20 @@ def mintyper2_pipeline(args):
     #find_lengths_of_genes_to_readjust(args.output, genes_to_readjust)
     #genes_to_readjust holds the identifier for the genes that need to be readjusted. Look up the top scorer and realign.
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
-    print (file_sequences_dict)
+    file_path = '/home/people/malhal/mintyper2/gap_map.json'
+    gap_map = load_json(file_path)
+    print (gap_map)
     sys.exit()
     sequences_dict = extract_sequences(args.output, gene_list)
     for key in sequences_dict:
         print(key, sequences_dict[key])
     distance_matrix, file_names = calculate_pairwise_distances(sequences_dict)
     print_distance_matrix_phylip(distance_matrix, file_names, args.output)
+
+def load_json(file_path):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    return data
 
 def load_sequences_from_file(output, gene_list):
     file_sequences_dict = dict()
