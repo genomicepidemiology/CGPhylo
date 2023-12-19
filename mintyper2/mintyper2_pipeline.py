@@ -26,10 +26,10 @@ def mintyper2_pipeline(args):
     #Figure how many of the shared genes have same size.
     print (len(gene_list), 'genes shared between all samples')
     print (len(non_shared_genes), 'genes not shared between all sam ples')
-    same_length_genes, genes_to_readjust = find_common_genes_with_same_length(args.output, gene_list)
-    print (len(same_length_genes))
-    print ('genes to fix', len(genes_to_readjust))
-    find_lengths_of_genes_to_readjust(args.output, genes_to_readjust)
+    #same_length_genes, genes_to_readjust = find_common_genes_with_same_length(args.output, gene_list)
+    #print (len(same_length_genes))
+    #print ('genes to fix', len(genes_to_readjust))
+    #find_lengths_of_genes_to_readjust(args.output, genes_to_readjust)
     #genes_to_readjust holds the identifier for the genes that need to be readjusted. Look up the top scorer and realign.
     sys.exit()
     for item in non_shared_genes[0:20]:
@@ -41,10 +41,13 @@ def mintyper2_pipeline(args):
     print_distance_matrix_phylip(distance_matrix, file_names, args.output)
 
 def find_lengths_of_genes_to_readjust(output, genes_to_readjust):
+    file_gene_dict = dict()
     gene_dict = dict()
     files = os.listdir(output)
     for file in files:
         if file.endswith('.res'):
+            name = file.split('.')[0]
+            file_gene_dict[name] = dict()
             with open(os.path.join(output, file), 'r') as f:
                 for line in f:
                     if not line.startswith('#'):
@@ -53,13 +56,7 @@ def find_lengths_of_genes_to_readjust(output, genes_to_readjust):
                         gene = '_'.join(allele)
                         if gene in genes_to_readjust:
                             if gene not in gene_dict:
-                                gene_dict[gene] = [[], []]
-                                gene_dict[gene][0].append(line[0])
-                                gene_dict[gene][1].append(file)
-                            else:
-                                gene_dict[gene][0].append(line[0])
-                                gene_dict[gene][1].append(file)
-
+                                file_gene_dict[name][gene] = line[0]
     for gene in gene_dict:
         print (gene, gene_dict[gene])
     sys.exit()
