@@ -26,6 +26,7 @@ def mintyper2_pipeline(args):
     gap_map = load_json(file_path)
     distance_matrix, file_names, total_length = calculate_pairwise_distances(file_sequences_dict, gap_map)
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, total_length)
+    print("The output distance matrix has been normalized to a genome size of 1.000.000. The identified core genes comprises {} bases.".format(total_length), file=sys.stderr)
 
 def load_json(file_path):
     with open(file_path, 'r') as file:
