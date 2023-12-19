@@ -31,9 +31,6 @@ def mintyper2_pipeline(args):
     #print ('genes to fix', len(genes_to_readjust))
     #find_lengths_of_genes_to_readjust(args.output, genes_to_readjust)
     #genes_to_readjust holds the identifier for the genes that need to be readjusted. Look up the top scorer and realign.
-    sys.exit()
-    for item in non_shared_genes[0:20]:
-        print (item)
     sequences_dict = extract_sequences(args.output, gene_list)
     for key in sequences_dict:
         print(key, len(sequences_dict[key]))
