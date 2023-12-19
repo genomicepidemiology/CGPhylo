@@ -33,7 +33,7 @@ def mintyper2_pipeline(args):
     #genes_to_readjust holds the identifier for the genes that need to be readjusted. Look up the top scorer and realign.
     sequences_dict = extract_sequences(args.output, gene_list)
     for key in sequences_dict:
-        print(key, len(sequences_dict[key]))
+        print(key, sequences_dict[key])
     distance_matrix, file_names = calculate_pairwise_distances(sequences_dict)
     print_distance_matrix_phylip(distance_matrix, file_names, args.output)
 
