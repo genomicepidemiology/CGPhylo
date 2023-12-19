@@ -34,7 +34,7 @@ def mintyper2_pipeline(args):
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     file_path = '/home/people/malhal/mintyper2/gap_map.json'
     gap_map = load_json(file_path)
-    distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict)
+    distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict, gap_map)
     print_distance_matrix_phylip(distance_matrix, file_names, args.output)
 
 def load_json(file_path):
