@@ -31,11 +31,35 @@ def mintyper2_pipeline(args):
     #print ('genes to fix', len(genes_to_readjust))
     #find_lengths_of_genes_to_readjust(args.output, genes_to_readjust)
     #genes_to_readjust holds the identifier for the genes that need to be readjusted. Look up the top scorer and realign.
+    file_sequences_dict = load_sequences_from_file(args.output, gene_list)
+    print (file_sequences_dict)
+    sys.exit()
     sequences_dict = extract_sequences(args.output, gene_list)
     for key in sequences_dict:
         print(key, sequences_dict[key])
     distance_matrix, file_names = calculate_pairwise_distances(sequences_dict)
     print_distance_matrix_phylip(distance_matrix, file_names, args.output)
+
+def load_sequences_from_file(output, gene_list):
+    file_sequences_dict = dict()
+    files = os.listdir(output)
+    for file in files:
+        if file.endswith('.fsa'):
+            name = file.split('.')[0]
+            file_sequences_dict[name] = dict()
+            with open(os.path.join(output, file), 'r') as f:
+                for line in f:
+                    if line.startswith('>'):
+                        line = line.strip()
+                        allele = line[1:]
+                        gene = line[1:].split('_')[0]
+                        if gene in gene_list:
+                            file_sequences_dict[name][allele] = ''
+                    else:
+                        file_sequences_dict[name][allele] += line.strip()
+    return file_sequences_dict
+
+
 
 def find_lengths_of_genes_to_readjust(output, genes_to_readjust):
     file_gene_dict = dict()
