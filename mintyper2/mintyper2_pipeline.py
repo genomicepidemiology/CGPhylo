@@ -175,6 +175,7 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
                     # Realign sequences
                     realigned_seq1 = recreate_alignment(seq1, gap_string1)
                     realigned_seq2 = recreate_alignment(seq2, gap_string2)
+                    print (sequences_dict[file_names[i]][gene][0], sequences_dict[file_names[j]][gene][0], gap_string1, gap_string2)
                     print (len(seq1), len(seq2), len(realigned_seq1), len(realigned_seq2))
                 else:
                     realigned_seq1 = seq1
