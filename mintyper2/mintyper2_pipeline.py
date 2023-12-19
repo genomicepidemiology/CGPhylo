@@ -34,12 +34,7 @@ def mintyper2_pipeline(args):
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     file_path = '/home/people/malhal/mintyper2/gap_map.json'
     gap_map = load_json(file_path)
-    print (gap_map)
-    sys.exit()
-    sequences_dict = extract_sequences(args.output, gene_list)
-    for key in sequences_dict:
-        print(key, sequences_dict[key])
-    distance_matrix, file_names = calculate_pairwise_distances(sequences_dict)
+    distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict)
     print_distance_matrix_phylip(distance_matrix, file_names, args.output)
 
 def load_json(file_path):
@@ -61,9 +56,9 @@ def load_sequences_from_file(output, gene_list):
                         allele = line[1:]
                         gene = line[1:].split('_')[0]
                         if gene in gene_list:
-                            file_sequences_dict[name][allele] = ''
+                            file_sequences_dict[name][gene] = [allele, '']
                     if gene != None and gene in gene_list and not line.startswith('>'):
-                        file_sequences_dict[name][allele] += line.strip()
+                        file_sequences_dict[name][gene][1] += line.strip()
     return file_sequences_dict
 
 
@@ -159,7 +154,7 @@ def print_distance_matrix_phylip(distance_matrix, file_names, output):
                 print(f"\t{row[j]}", end='', file=w)
             print(file=w)
 
-def calculate_pairwise_distances(sequences_dict):
+def calculate_pairwise_distances(sequences_dict, gap_map):
     file_names = list(sequences_dict.keys())
     num_files = len(file_names)
     distance_matrix = [[0 for _ in range(num_files)] for _ in range(num_files)]
@@ -171,13 +166,23 @@ def calculate_pairwise_distances(sequences_dict):
 
             # Compare each gene's sequences nucleotide by nucleotide
             for gene in sequences_dict[file_names[i]].keys():
-                seq1 = sequences_dict[file_names[i]][gene]
-                seq2 = sequences_dict[file_names[j]][gene]
-                if len(seq1) != len(seq2):
-                    print (f"Warning: {gene} has different lengths between {file_names[i]} and {file_names[j]}")
+                seq1 = sequences_dict[file_names[i]][gene][1]  # Get the sequence for the first file
+                seq2 = sequences_dict[file_names[j]][gene][1]  # Get the sequence for the second file
+
+                # Retrieve gap strings from the gap_map
+                gap_string1, gap_string2 = gap_map.get(sequences_dict[file_names[i]][gene][0], {}).get(sequences_dict[file_names[j]][gene][0], ("", ""))
+                print (gap_string1, gap_string2)
+                # Realign sequences
+                realigned_seq1 = recreate_alignment(seq1, gap_string1)
+                realigned_seq2 = recreate_alignment(seq2, gap_string2)
+                print (len(seq1), len(seq2), len(realigned_seq1), len(realigned_seq2))
+
+                # Ensure the sequences are of the same length after realignment
+                if len(realigned_seq1) != len(realigned_seq2):
+                    print(f"Warning: {gene} has different lengths between {file_names[i]} and {file_names[j]} after realignment")
 
                 # Modified comparison to skip lowercase nucleotides
-                diff = sum(1 for a, b in zip(seq1, seq2) if a != b and not (a.islower() or b.islower()))
+                diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if a != b and not (a.islower() or b.islower()))
 
                 # Count differences
                 count += diff
@@ -187,62 +192,6 @@ def calculate_pairwise_distances(sequences_dict):
             distance_matrix[j][i] = count  # Symmetric matrix
 
     return distance_matrix, file_names
-
-def extract_sequences(directory, headers):
-    sequences_dict = {}
-
-    # Loop through each file in the directory
-    for file in os.listdir(directory):
-        if file.endswith('.fsa'):
-            file_name = file.split('.')[0]
-            sequences_dict[file_name] = {header: '' for header in headers}
-
-            with open(os.path.join(directory, file), 'r') as fsa_file:
-                lines = fsa_file.readlines()
-                current_sequence = ''
-                current_header = None
-
-                # Loop through each line in the file
-                for line in lines:
-                    if line.startswith('>'):
-                        if current_sequence and current_header:
-                            sequences_dict[file_name][current_header] = current_sequence
-                        current_header = line.split()[0][1:]
-                        current_sequence = ''
-                    elif current_header in headers:
-                        current_sequence += line.strip()
-
-                # Add the last found sequence
-                if current_sequence and current_header:
-                    sequences_dict[file_name][current_header] = current_sequence
-
-    return sequences_dict
-
-def calculate_distance_matrix(sequences):
-    num_sequences = len(sequences)
-    distance_matrix = [[0 for _ in range(num_sequences)] for _ in range(num_sequences)]
-
-    # Compare each sequence with every other sequence
-    for i in range(num_sequences):
-        for j in range(i + 1, num_sequences):
-            # Count differences in nucleotides at each position
-            differences = sum(1 for a, b in zip(sequences[i], sequences[j]) if a != b)
-            distance_matrix[i][j] = differences
-            distance_matrix[j][i] = differences  # Symmetric matrix
-
-    return distance_matrix
-
-def load_fsa_gene_files(fsa_file):
-    gene_dict = {}
-    with open (fsa_file, 'r') as f:
-        for line in f:
-            if line.startswith('>'):
-                header = line.strip()[1:]
-                gene_name = header.split('_')[0]
-                gene_dict[gene_name] = ''
-            else:
-                gene_dict[gene_name] += line.strip()
-    return gene_dict
 
 def find_common_genes(directory_path):
     files = os.listdir(directory_path)

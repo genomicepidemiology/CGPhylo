@@ -15,6 +15,10 @@ def align_sequences(seq_a, seq_b):
 
     alignments = aligner.align(seq_a, seq_b)
     gap_positions_a, gap_positions_b = extract_gap_positions(alignments[0])
+    # Check if the aligned sequences have the same length
+    if len(gap_positions_a) != len(gap_positions_b):
+        print("Error: Aligned sequences do not have the same length.")
+
     return gap_positions_a, gap_positions_b, alignments[0].format()
 
 def extract_gap_positions(alignment):
