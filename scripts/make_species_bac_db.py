@@ -40,5 +40,4 @@ with open(db_path, 'r') as f:
             string_list.append(t)
             t += 1
 
-print (string_list)
-print (len(string_list))
+print (",".join(string_list))
