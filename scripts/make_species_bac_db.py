@@ -38,7 +38,7 @@ with open(db_path, 'r') as f:
         specie = line[1] + ' ' + line[2]
         if specie in species_string_list:
             string_list.append(t)
-    t += 1
+        t += 1
 
 seq_string = ",".join(str(x) for x in string_list)
 
