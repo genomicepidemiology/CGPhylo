@@ -41,3 +41,4 @@ with open(db_path, 'r') as f:
             t += 1
 
 print (string_list)
+print (len(string_list))
