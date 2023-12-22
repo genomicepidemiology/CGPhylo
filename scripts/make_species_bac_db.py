@@ -34,7 +34,7 @@ string_list = list()
 t = 1
 with open(db_path, 'r') as f:
     for line in f:
-        line = line.splut(' ')
+        line = line.split(' ')
         specie = line[1] + ' ' + line[2]
         if specie in species_string_list:
             string_list.append(t)
