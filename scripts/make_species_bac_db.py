@@ -40,4 +40,6 @@ with open(db_path, 'r') as f:
             string_list.append(t)
             t += 1
 
-print (",".join(str(x) for x in string_list))
+seq_string = ",".join(str(x) for x in string_list)
+
+os.system('kma seq2fasta -t_db /home/people/malhal/contamErase_db/bac_db -seqs {} > cgmlst_species.fasta'.format(seq_string))
