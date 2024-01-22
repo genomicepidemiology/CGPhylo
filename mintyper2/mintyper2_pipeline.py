@@ -5,9 +5,6 @@ def mintyper2_pipeline(args):
     """Main function"""
     os.system('mkdir {}'.format(args.output))
     # Run KMA alignment for bacteria mapping
-    os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -Sparse -ss c'\
-              .format(args.nanopore, args.output + '/species_mapping', args.db_dir + '/bac_db/bac_db', args.threads))
-    sys.exit()
     # Run KMA alignment for cgMLST mapping
     #Find species and load database
     if args.nanopore != []:
@@ -16,11 +13,19 @@ def mintyper2_pipeline(args):
                 name = file.split('/')[-1].split('.')[0]
             else:
                 name = file.split(' ')[0].split('/')[-1].split('.')[0]
+            os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -Sparse -ss c' \
+                      .format(args.nanopore, args.output + '/species_mapping', args.db_dir + '/bac_db/bac_db',
+                              args.threads))
+            sys.exit()
             cmd = 'kma -i {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db_2 -ID 90 -md 5 -mct 0.5 -t 8 -mem_mode -dense -ref_fsa -ont'.format(file, args.output, name)
             os.system(cmd)
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
+            os.system('kma -i {} {} -o {} -t_db {} -mem_mode -t {} -Sparse -ss c' \
+                      .format(args.illumina[0], args.illumina[1], args.output + '/species_mapping', args.db_dir + '/bac_db/bac_db',
+                              args.threads))
+            sys.exit()
             cmd = 'kma -i {} {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db_2 -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name)
             os.system(cmd)
     gene_list, non_shared_genes = find_common_genes(args.output)
