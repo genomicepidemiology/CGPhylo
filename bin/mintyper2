@@ -30,7 +30,7 @@ if __name__ == '__main__':
     parser.add_argument('--output', action="store", type=str, default='output', dest="output",
                         help="Output directory")
     parser.add_argument('--db_dir', action="store", type=str, dest="db_dir",
-                        help="Directory containing bac_db and cgmlst_db")
+                        help="Directory containing bac_db and *species*_cgMLST_alleles folders")
     parser.add_argument('--threads', action="store", type=int, default=1, dest="threads",
                         help="Number of threads")
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)

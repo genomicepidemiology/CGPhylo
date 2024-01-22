@@ -4,7 +4,6 @@ Bordetella pertussis
 Brucella melitensis
 Brucella spp.
 Burkholderia mallei (FLI)
-Burkholderia mallei (RKI)
 Burkholderia pseudomallei
 Campylobacter jejuni/coli
 Clostridioides difficile
