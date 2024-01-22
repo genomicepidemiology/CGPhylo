@@ -293,7 +293,7 @@ def get_species_db_string(top_hit, db_dir):
     db_string = db_dir + '/' + db_string
 
     if os.path.exists(db_string):
-        return db_string + '/' + db_string.split('_')[-1]
+        return db_string + '/' + db_string.split('/')[-1]
     else:
         print (db_string)
         sys.exit('No cgMLST database found for species: ' + top_species)
