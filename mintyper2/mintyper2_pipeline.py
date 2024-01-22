@@ -280,12 +280,17 @@ def get_species_db_string(top_hit):
     Cronobacter_list = ['Cronobacter sakazakii', 'Cronobacter malonaticus']
     Campylobacter_list = ['Campylobacter jejuni', 'Campylobacter coli']
     if top_species in Mycobacterium_list:
-        return 'Mycobacterium_tuberculosis_bovis_africanum_canettii_cgMLST_alleles'
+        db_string = 'Mycobacterium_tuberculosis_bovis_africanum_canettii_cgMLST_alleles'
     elif top_species in Klebsiella_list:
-        return 'Klebsiella_pneumoniae_variicola_quasipneumoniae_cgMLST_alleles'
+        db_string = 'Klebsiella_pneumoniae_variicola_quasipneumoniae_cgMLST_alleles'
     elif top_species in Cronobacter_list:
-        return 'Cronobacter_sakazakii_malonaticus_cgMLST_alleles'
+        db_string = 'Cronobacter_sakazakii_malonaticus_cgMLST_alleles'
     elif top_species in Campylobacter_list:
-        return 'Campylobacter_jejuni_coli_cgMLST_alleles'
+        db_string = 'Campylobacter_jejuni_coli_cgMLST_alleles'
     else:
-        return "{}_{}_cgMLST_alleles".format(top_hit.split(' ')[1], top_hit.split(' ')[2])
+        db_string = "{}_{}_cgMLST_alleles".format(top_hit.split(' ')[1], top_hit.split(' ')[2])
+
+    if os.path.exists(db_string):
+        return db_string + '/' + db_string.split('_')[-1]
+    else:
+        sys.exit('No cgMLST database found for species: ' + top_species)
