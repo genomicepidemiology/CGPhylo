@@ -17,9 +17,8 @@ def mintyper2_pipeline(args):
             os.system('kma -i {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
                       .format(file, args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
-            top_species = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
-            top_species = top_species.split(' ')[1] + ' ' + top_species.split(' ')[2]
-            species_db_string = get_species_db_string(top_species)
+            top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
+            species_db_string = get_species_db_string(top_template)
             print(args.db_dir + '/' + species_db_string)
             sys.exit()
             cmd = 'kma -i {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db_2 -ID 90 -md 5 -mct 0.5 -t 8 -mem_mode -dense -ref_fsa -ont'.format(file, args.output, name)
@@ -30,9 +29,8 @@ def mintyper2_pipeline(args):
             os.system('kma -i {} {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
                       .format(args.illumina[0], args.illumina[1], args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
-            top_species = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
-            top_species = top_species.split(' ')[1] + ' ' + top_species.split(' ')[2]
-            species_db_string = get_species_db_string(top_species)
+            top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
+            species_db_string = get_species_db_string(top_template)
             print(args.db_dir + '/' + species_db_string)
             sys.exit()
             cmd = 'kma -i {} {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db_2 -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name)
@@ -274,8 +272,9 @@ def highest_scoring_hit_spa_file(file_path):
 
     return highest_scoring_template
 
-def get_species_db_string(top_species):
+def get_species_db_string(top_hit):
     #Update these lists in cgMLST changes are made
+    top_species = top_hit.split(' ')[1] + ' ' + top_hit.split(' ')[2]
     Mycobacterium_list = ['Mycobacterium tuberculosis', 'Mycobacterium bovis', 'Mycobacterium aafricanum', 'Mycobacterium canettii']
     Klebsiella_list = ['Klebsiella pneumoniae', 'Klebsiella variicola', 'Klebsiella quasipneumoniae']
     Cronobacter_list = ['Cronobacter sakazakii', 'Cronobacter malonaticus']
@@ -289,4 +288,4 @@ def get_species_db_string(top_species):
     elif top_species in Campylobacter_list:
         return 'Campylobacter_jejuni_coli_cgMLST_alleles'
     else:
-        return top_species + '_cgMLST_alleles'
+        return "{}_{}_cgMLST_alleles".format(top_hit.split(' ')[1], top_hit.split(' ')[2])
