@@ -6,25 +6,29 @@ def mintyper2_pipeline(args):
     os.system('mkdir {}'.format(args.output))
     # Run KMA alignment for bacteria mapping
     # Run KMA alignment for cgMLST mapping
-    #Find species and load database
+    # TBD Figure out a cleaver, fast species ID. Can we doo all at once, or should we do all individually?
+    # What about all at once, but also a seperate function to check individually that the species is the correct one? Main assumption should be that the user has given all of the same species.
     if args.nanopore != []:
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
                 name = file.split('/')[-1].split('.')[0]
             else:
                 name = file.split(' ')[0].split('/')[-1].split('.')[0]
-            os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -Sparse -ss c' \
-                      .format(file, args.output + '/species_mapping', args.db_dir + '/bac_db/bac_db',
+            os.system('kma -i {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
+                      .format(file, args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
+            top_species = highest_scoring_hit(args.output + '/species_mapping_' + name + '.res')
             sys.exit()
             cmd = 'kma -i {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db_2 -ID 90 -md 5 -mct 0.5 -t 8 -mem_mode -dense -ref_fsa -ont'.format(file, args.output, name)
             os.system(cmd)
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
-            os.system('kma -i {} {} -o {} -t_db {} -mem_mode -t {} -Sparse -ss c' \
-                      .format(args.illumina[0], args.illumina[1], args.output + '/species_mapping', args.db_dir + '/bac_db/bac_db',
+            os.system('kma -i {} {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
+                      .format(args.illumina[0], args.illumina[1], args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
+            top_species = highest_scoring_hit(args.output + '/species_mapping_' + name + '.res')
+            print (top_species)
             sys.exit()
             cmd = 'kma -i {} {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db_2 -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name)
             os.system(cmd)
@@ -228,3 +232,39 @@ def find_duplicates(strings):
             duplicates.append(string)
 
     return duplicates
+
+
+def highest_scoring_hit(file_path):
+    """
+    Identifies and returns the highest scoring template from a tab-separated file.
+
+    This function reads through a specified file, assuming it to be tab-separated,
+    and identifies the row with the highest score in a designated score column.
+    It returns the template corresponding to this highest score.
+
+    Args:
+        file_path (str): The path to the file to be read. Assumes a specific format where
+                         the score is in the third column and the template in the first.
+
+    Returns:
+        str: The identifier of the highest scoring template.
+    """
+
+    highest_score = 0
+    highest_scoring_template = ""
+
+    with open(file_path, 'r') as file:
+        next(file)  # Skip the header line
+        for line in file:
+            columns = line.split('\t')
+            try:
+                # Extract score and compare to find the highest
+                score = int(columns[2])  # Score is expected in the 3rd column
+                if score > highest_score:
+                    highest_score = score
+                    highest_scoring_template = columns[0]  # Template is expected in the 1st column
+            except ValueError:
+                # Skip line if score is not an integer or line is malformed
+                continue
+
+    return highest_scoring_template
