@@ -14,7 +14,7 @@ def mintyper2_pipeline(args):
             else:
                 name = file.split(' ')[0].split('/')[-1].split('.')[0]
             os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -Sparse -ss c' \
-                      .format(args.nanopore, args.output + '/species_mapping', args.db_dir + '/bac_db/bac_db',
+                      .format(file, args.output + '/species_mapping', args.db_dir + '/bac_db/bac_db',
                               args.threads))
             sys.exit()
             cmd = 'kma -i {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db_2 -ID 90 -md 5 -mct 0.5 -t 8 -mem_mode -dense -ref_fsa -ont'.format(file, args.output, name)
