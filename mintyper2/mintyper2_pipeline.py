@@ -293,6 +293,7 @@ def get_species_db_string(top_hit, db_dir):
     db_string = db_dir + '/' + db_string
 
     if os.path.exists(db_string):
+        print (db_string)
         return db_string + '/' + db_string.split('/')[-1]
     else:
         print (db_string)
