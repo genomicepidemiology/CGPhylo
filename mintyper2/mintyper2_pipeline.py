@@ -18,6 +18,7 @@ def mintyper2_pipeline(args):
                       .format(file, args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
             top_species = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
+            top_species = top_species.split(' ')[1] + ' ' + top_species.split(' ')[2]
             species_db_string = get_species_db_string(top_species)
             print(args.db_dir + '/' + species_db_string)
             sys.exit()
@@ -30,6 +31,7 @@ def mintyper2_pipeline(args):
                       .format(args.illumina[0], args.illumina[1], args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
             top_species = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
+            top_species = top_species.split(' ')[1] + ' ' + top_species.split(' ')[2]
             species_db_string = get_species_db_string(top_species)
             print(args.db_dir + '/' + species_db_string)
             sys.exit()
