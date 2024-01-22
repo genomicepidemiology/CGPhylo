@@ -17,7 +17,9 @@ def mintyper2_pipeline(args):
             os.system('kma -i {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
                       .format(file, args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
-            top_species = highest_scoring_hit(args.output + '/species_mapping_' + name + '.spa')
+            top_species = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
+            species_db_string = get_species_db_string(top_species)
+            print(args.db_dir + '/' + species_db_string)
             sys.exit()
             cmd = 'kma -i {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db_2 -ID 90 -md 5 -mct 0.5 -t 8 -mem_mode -dense -ref_fsa -ont'.format(file, args.output, name)
             os.system(cmd)
@@ -27,8 +29,9 @@ def mintyper2_pipeline(args):
             os.system('kma -i {} {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
                       .format(args.illumina[0], args.illumina[1], args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
-            top_species = highest_scoring_hit(args.output + '/species_mapping_' + name + '.spa')
-            print (top_species)
+            top_species = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
+            species_db_string = get_species_db_string(top_species)
+            print(args.db_dir + '/' + species_db_string)
             sys.exit()
             cmd = 'kma -i {} {} -o {}/{} -t_db /home/people/malhal/mintyper2/consensus_genes_db_2 -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name)
             os.system(cmd)
@@ -234,7 +237,7 @@ def find_duplicates(strings):
     return duplicates
 
 
-def highest_scoring_hit(file_path):
+def highest_scoring_hit_spa_file(file_path):
     """
     Identifies and returns the highest scoring template from a tab-separated file.
 
@@ -268,3 +271,20 @@ def highest_scoring_hit(file_path):
                 continue
 
     return highest_scoring_template
+
+def get_species_db_string(top_species):
+    #Update these lists in cgMLST changes are made
+    Mycobacterium_list = ['Mycobacterium tuberculosis', 'Mycobacterium bovis', 'Mycobacterium aafricanum', 'Mycobacterium canettii']
+    Klebsiella_list = ['Klebsiella pneumoniae', 'Klebsiella variicola', 'Klebsiella quasipneumoniae']
+    Cronobacter_list = ['Cronobacter sakazakii', 'Cronobacter malonaticus']
+    Campylobacter_list = ['Campylobacter jejuni', 'Campylobacter coli']
+    if top_species in Mycobacterium_list:
+        return 'Mycobacterium_tuberculosis_bovis_africanum_canettii_cgMLST_alleles'
+    elif top_species in Klebsiella_list:
+        return 'Klebsiella_pneumoniae_variicola_quasipneumoniae_cgMLST_alleles'
+    elif top_species in Cronobacter_list:
+        return 'Cronobacter_sakazakii_malonaticus_cgMLST_alleles'
+    elif top_species in Campylobacter_list:
+        return 'Campylobacter_jejuni_coli_cgMLST_alleles'
+    else:
+        return top_species + '_cgMLST_alleles'
