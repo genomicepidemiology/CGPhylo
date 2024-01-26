@@ -3,11 +3,11 @@ import sys
 import json
 def mintyper2_pipeline(args):
     """Main function"""
+    """
     os.system('mkdir {}'.format(args.output))
     # Run KMA alignment for bacteria mapping
     # Run KMA alignment for cgMLST mapping
-    # TBD Figure out a cleaver, fast species ID. Can we doo all at once, or should we do all individually?
-    # What about all at once, but also a seperate function to check individually that the species is the correct one? Main assumption should be that the user has given all of the same species.
+    # TBD Build function which excludes samples with the species.
     if args.nanopore != []:
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
@@ -32,8 +32,11 @@ def mintyper2_pipeline(args):
             species_db_string = get_species_db_string(top_template, args.db_dir)
             cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
             os.system(cmd)
-
+    """
     gene_list, non_shared_genes = find_common_genes(args.output)
+    print (len(gene_list))
+    print (len(non_shared_genes))
+    sys.exit()
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     file_path = '/home/people/malhal/mintyper2/gap_map.json'
     gap_map = load_json(file_path)
@@ -294,4 +297,5 @@ def get_species_db_string(top_hit, db_dir):
         return db_string + '/' + db_string.split('/')[-1] + '_complete'
     else:
         print (db_string)
+        #TBD Do any acutally exist here, instead we want to exclude this sample and give a warning in the log
         sys.exit('No cgMLST database found for species: ' + top_species)
