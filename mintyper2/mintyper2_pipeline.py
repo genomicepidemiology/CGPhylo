@@ -87,11 +87,9 @@ def find_common_genes_with_same_length(output, gene_list):
     same_length_list = list()
     files = os.listdir(output)
 
-    print (files)
 
     # Collect genes from each file
     for file in files:
-        print (file)
         if file.endswith('.res'):
             genes = set()
             top_score_dict = dict()
@@ -106,7 +104,6 @@ def find_common_genes_with_same_length(output, gene_list):
                                 top_score_dict[gene] = [line[0], line[1]]
                             elif float(line[1]) > float(top_score_dict[gene][1]):
                                 top_score_dict[gene] = [line[0], line[1]]
-            print (len(top_score_dict[gene]))
 
             for gene in top_score_dict:
                 genes.add(top_score_dict[gene][0])
@@ -199,14 +196,15 @@ def find_common_genes(directory_path):
 
     # Collect genes from each file
     for file in files:
+        print (file)
         if file.endswith('.res'):
             genes = set()
             with open(os.path.join(directory_path, file), 'r') as f:
                 for line in f:
                     if not line.startswith('#'):
                         line = line.strip().split('\t')
-                        allele = line[0].split('_')[:-2]
-                        gene = '_'.join(allele)
+                        allele = line[0].split('_')[-1]
+                        gene = line[0][:-len(allele) - 1]
                         genes.add(gene)
 
             gene_lists.append(genes)
