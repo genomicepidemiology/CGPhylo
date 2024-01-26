@@ -34,6 +34,7 @@ def mintyper2_pipeline(args):
             os.system(cmd)
     """
     gene_list, non_shared_genes = find_common_genes(args.output)
+    print (gene_list)
     print (len(gene_list))
     print (len(non_shared_genes))
     sys.exit()
