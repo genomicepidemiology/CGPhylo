@@ -90,6 +90,7 @@ def find_common_genes_with_same_length(output, gene_list):
 
     # Collect genes from each file
     for file in files:
+        print (file)
         if file.endswith('.res'):
             genes = set()
             top_score_dict = dict()
@@ -104,6 +105,7 @@ def find_common_genes_with_same_length(output, gene_list):
                                 top_score_dict[gene] = [line[0], line[1]]
                             elif float(line[1]) > float(top_score_dict[gene][1]):
                                 top_score_dict[gene] = [line[0], line[1]]
+            print (len(top_score_dict[gene]))
 
             for gene in top_score_dict:
                 genes.add(top_score_dict[gene][0])
