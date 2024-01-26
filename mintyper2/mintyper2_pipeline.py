@@ -87,6 +87,7 @@ def find_common_genes_with_same_length(output, gene_list):
     same_length_list = list()
     files = os.listdir(output)
 
+    print (files)
 
     # Collect genes from each file
     for file in files:
