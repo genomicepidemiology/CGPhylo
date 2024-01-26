@@ -34,10 +34,9 @@ def mintyper2_pipeline(args):
             os.system(cmd)
     """
     gene_list, non_shared_genes = find_common_genes(args.output)
-    print (gene_list)
+    #print (gene_list)
     print (len(gene_list))
     print (len(non_shared_genes))
-    sys.exit()
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     file_path = '/home/people/malhal/mintyper2/gap_map.json'
     gap_map = load_json(file_path)
@@ -196,7 +195,6 @@ def find_common_genes(directory_path):
 
     # Collect genes from each file
     for file in files:
-        print (file)
         if file.endswith('.res'):
             genes = set()
             with open(os.path.join(directory_path, file), 'r') as f:
