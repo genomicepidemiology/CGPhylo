@@ -1,6 +1,9 @@
 import os
 import sys
 import json
+import re
+
+
 def mintyper2_pipeline(args):
     """Main function"""
 
@@ -40,6 +43,7 @@ def mintyper2_pipeline(args):
     gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
     gene_list, non_shared_genes = find_common_genes(args.output)
     print (gene_list)
+    sys.exit()
     print (len(gene_list))
     print (len(non_shared_genes))
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
@@ -69,7 +73,6 @@ def load_sequences_from_file(output, gene_list):
                         line = line.strip()
                         allele = line[1:]
                         gene = line[1:].split('_')[0]
-                        print (gene)
                         if gene in gene_list:
                             file_sequences_dict[name][gene] = [allele, '']
                     if gene != None and gene in gene_list and not line.startswith('>'):
@@ -104,8 +107,7 @@ def find_common_genes_with_same_length(output, gene_list):
                 for line in f:
                     if not line.startswith('#'):
                         line = line.strip().split('\t')
-                        allele = line[0].split('_')[:-2]
-                        gene = '_'.join(allele)
+                        gene = extract_gene_name(line[0])
                         if gene in gene_list:
                             if gene not in top_score_dict:
                                 top_score_dict[gene] = [line[0], line[1]]
@@ -125,7 +127,7 @@ def find_common_genes_with_same_length(output, gene_list):
     for gene_list in same_length_list:
         for allele in gene_list:
             if allele not in common:
-                gene = '_'.join(allele.split('_')[:-2])
+                gene = extract_gene_name(allele)
                 genes_to_reajust.add(gene)
 
     return list(common), list(genes_to_reajust)
@@ -313,3 +315,10 @@ def get_species_db_string(top_hit, db_dir):
         print (db_string)
         #TBD Do any acutally exist here, instead we want to exclude this sample and give a warning in the log
         sys.exit('No cgMLST database found for species: ' + top_species)
+
+def extract_gene_name(s):
+    match = re.match(r'(.+?)_len_\d+', s)
+    if match:
+        return match.group(1)
+    else:
+        return None  # or some error handling
