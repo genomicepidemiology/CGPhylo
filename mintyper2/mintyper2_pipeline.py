@@ -8,6 +8,7 @@ def mintyper2_pipeline(args):
     # Run KMA alignment for bacteria mapping
     # Run KMA alignment for cgMLST mapping
     # TBD Build function which excludes samples with the species.
+    """
     if args.nanopore != []:
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
@@ -35,7 +36,8 @@ def mintyper2_pipeline(args):
 
             cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
             os.system(cmd)
-
+    """
+    gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_gap_map.json'
     gene_list, non_shared_genes = find_common_genes(args.output)
     #print (gene_list)
     print (len(gene_list))
