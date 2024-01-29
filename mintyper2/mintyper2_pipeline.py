@@ -48,8 +48,13 @@ def mintyper2_pipeline(args):
     gap_map = load_json(gap_map_path)
     print ('Loaded gap map')
     distance_matrix, file_names, total_length = calculate_pairwise_distances(file_sequences_dict, gap_map)
-    print_distance_matrix_phylip(distance_matrix, file_names, args.output, total_length)
-    print("The output distance matrix has been normalized to a genome size of 1.000.000. The identified core genes spanned {} bases.".format(total_length), file=sys.stderr)
+    normalization_factor = 1000000 / total_length
+    distance_matrix_output_name = 'distance_matrix_1M.txt'
+    print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, normalization_factor)
+    print("A distance matrix normalized to a genome size of 1.000.000 has been outputted. The identified core genes spanned {} bases.".format(total_length), file=sys.stderr)
+    distance_matrix_output_name = 'distance_matrix_GS.txt'
+    print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, 1)
+    print ("A distance matrix normalized to a genome size of {} has been outputted. The identified core genes spanned {} bases.".format(total_length, total_length), file=sys.stderr)
 
 def load_json(file_path):
     with open(file_path, 'r') as file:
@@ -90,10 +95,9 @@ def recreate_alignment(seq, gap_string):
 
 
 
-def print_distance_matrix_phylip(distance_matrix, file_names, output, total_length):
-    normalization_factor = 1000000 / total_length
+def print_distance_matrix_phylip(distance_matrix, file_names, output, distance_matrix_output_name, normalization_factor):
     num_files = len(file_names)
-    with open(output + '/distance_matrix.phylip', 'w') as w:
+    with open(output + '/' + distance_matrix_output_name, 'w') as w:
 
 
         # Print the number of files first
