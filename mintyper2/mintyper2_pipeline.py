@@ -11,7 +11,6 @@ def mintyper2_pipeline(args):
     # Run KMA alignment for bacteria mapping
     # Run KMA alignment for cgMLST mapping
     # TBD Build function which excludes samples with the species.
-    """
     if args.nanopore != []:
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
@@ -39,22 +38,19 @@ def mintyper2_pipeline(args):
 
             cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
             os.system(cmd)
-    """
-    gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
+    #gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
     gene_list, non_shared_genes = find_common_genes(args.output)
-    print (len(gene_list))
-    print (len(non_shared_genes))
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     gap_map = load_json(gap_map_path)
-    print ('Loaded gap map')
     distance_matrix, file_names, total_length = calculate_pairwise_distances(file_sequences_dict, gap_map)
     normalization_factor = 1000000 / total_length
     distance_matrix_output_name = 'distance_matrix_1M.txt'
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, normalization_factor)
     print("A distance matrix normalized to a genome size of 1.000.000 has been outputted. The identified core genes spanned {} bases.".format(total_length), file=sys.stderr)
-    distance_matrix_output_name = 'distance_matrix_GS.txt'
-    print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, 1)
-    print ("A distance matrix normalized to a genome size of {} has been outputted. The identified core genes spanned {} bases.".format(total_length, total_length), file=sys.stderr)
+    #TBD should we give an option to give input for normalization factor? Genome size?
+    #distance_matrix_output_name = 'distance_matrix_GS.txt'
+    #print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, 1)
+    #print ("A distance matrix normalized to a genome size of {} has been outputted. The identified core genes spanned {} bases.".format(total_length, total_length), file=sys.stderr)
 
 def load_json(file_path):
     with open(file_path, 'r') as file:
