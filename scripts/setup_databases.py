@@ -18,14 +18,14 @@ def main(args):
     check_kma_installed()
     if not os.path.exists(args.output):
         os.makedirs(args.output)
-    #decompress_tar_archive(args.zip, args.output)
+    decompress_tar_archive(args.zip, args.output)
+    #Consider added non-zip
     allele_folders = os.listdir(args.output)
     for allele_folder in allele_folders:
         if not allele_folder.startswith('.') and 'bac_db' not in allele_folder:
 
             path = args.output + '/' + allele_folder
             print (path)
-            """
             rename_alleles(path)
             concat_renamed_fasta_files(path)
             os.system('kma index -i {}/{}_complete.fasta -o {}/{}_complete'.format(path, allele_folder, path, allele_folder))
@@ -46,10 +46,11 @@ def main(args):
             gene_alignments = find_gap_strings("{}/{}_consensus_genes.fasta".format(path, allele_folder))
             with open('{}/{}_consensus_gap_map.json'.format(path, allele_folder), 'w') as outfile:
                 json.dump(gene_alignments, outfile, indent=4)
-            """
+
             os.system('rm {}/*.fasta'.format(path))
             os.system('rm {}/*complete*'.format(path))
-    # Add bac_db TBD
+
+    # Add bac_db TBD # Place a download wget to bac_db from cge. Perhaps download before unpacking others? Include it in the tar ball?
 
 
 def derive_gene_names(name_file):
