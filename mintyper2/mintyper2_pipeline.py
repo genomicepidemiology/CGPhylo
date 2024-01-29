@@ -158,6 +158,8 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
                             print(f"{gene} has {diff} differences between {file_names[i]} and {file_names[j]}")
                             print (realigned_seq1)
                             print (realigned_seq2)
+                            print ('seq1: ', seq1)
+                            print ('seq2: ', seq2)
 
                 # Count differences
                 count += diff
