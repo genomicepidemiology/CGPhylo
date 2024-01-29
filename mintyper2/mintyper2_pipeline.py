@@ -44,6 +44,7 @@ def mintyper2_pipeline(args):
     print (len(non_shared_genes))
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     gap_map = load_json(gap_map_path)
+    print ('Loaded gap map')
     distance_matrix, file_names, total_length = calculate_pairwise_distances(file_sequences_dict, gap_map)
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, total_length)
     print("The output distance matrix has been normalized to a genome size of 1.000.000. The identified core genes spanned {} bases.".format(total_length), file=sys.stderr)
@@ -153,6 +154,8 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
     total_length = 0
     for file in sequences_dict:
         for gene in sequences_dict[file]:
+            print (gene)
+            print (sequences_dict[file][gene][1])
             total_length += len(sequences_dict[file][gene][1])
         break # Only need to do this once
     # Iterate over each pair of files
