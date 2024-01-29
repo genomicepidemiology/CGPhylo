@@ -108,6 +108,7 @@ def find_common_genes_with_same_length(output, gene_list):
                     if not line.startswith('#'):
                         line = line.strip().split('\t')
                         gene = extract_gene_name(line[0])
+                        print (gene)
                         if gene in gene_list:
                             if gene not in top_score_dict:
                                 top_score_dict[gene] = [line[0], line[1]]
@@ -316,8 +317,8 @@ def get_species_db_string(top_hit, db_dir):
         #TBD Do any acutally exist here, instead we want to exclude this sample and give a warning in the log
         sys.exit('No cgMLST database found for species: ' + top_species)
 
-def extract_gene_name(s):
-    match = re.match(r'(.+?)_len_\d+', s)
+def extract_gene_name(gene_string):
+    match = re.match(r'(.+?)_len_\d+', gene_string)
     if match:
         return match.group(1)
     else:
