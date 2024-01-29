@@ -93,46 +93,6 @@ def recreate_alignment(seq, gap_string):
     return ''.join(result)
 
 
-def find_common_genes_with_same_length(output, gene_list):
-    same_length_list = list()
-    files = os.listdir(output)
-
-
-    # Collect genes from each file
-    for file in files:
-        if file.endswith('.res'):
-            genes = set()
-            top_score_dict = dict()
-            with open(os.path.join(output, file), 'r') as f:
-                for line in f:
-                    if not line.startswith('#'):
-                        line = line.strip().split('\t')
-                        gene = extract_gene_name(line[0])
-                        print (gene)
-                        if gene in gene_list:
-                            if gene not in top_score_dict:
-                                top_score_dict[gene] = [line[0], line[1]]
-                            elif float(line[1]) > float(top_score_dict[gene][1]):
-                                top_score_dict[gene] = [line[0], line[1]]
-
-            for gene in top_score_dict:
-                genes.add(top_score_dict[gene][0])
-            same_length_list.append(genes)
-
-    # Find common genes
-    common = set(same_length_list[0])
-    for gene_list in same_length_list[1:]:
-        common.intersection_update(gene_list)
-
-    genes_to_reajust = set()
-    for gene_list in same_length_list:
-        for allele in gene_list:
-            if allele not in common:
-                gene = extract_gene_name(allele)
-                genes_to_reajust.add(gene)
-
-    return list(common), list(genes_to_reajust)
-
 
 def print_distance_matrix_phylip(distance_matrix, file_names, output, total_length):
     normalization_factor = 1000000 / total_length
@@ -217,8 +177,7 @@ def find_common_genes(directory_path):
                 for line in f:
                     if not line.startswith('#'):
                         line = line.strip().split('\t')
-                        allele = line[0].split('_')[-1]
-                        gene = line[0][:-len(allele) - 1]
+                        gene = extract_gene_name(line[0])
                         genes.add(gene)
 
             gene_lists.append(genes)
