@@ -42,6 +42,7 @@ def mintyper2_pipeline(args):
     #print (gene_list)
     print (len(gene_list))
     print (len(non_shared_genes))
+    print (gene_list)
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     print (file_sequences_dict)
     sys.exit()
