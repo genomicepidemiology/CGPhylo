@@ -152,7 +152,9 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
     num_files = len(file_names)
     distance_matrix = [[0 for _ in range(num_files)] for _ in range(num_files)]
     total_length = 0
+    print len(sequences_dict)
     for file in sequences_dict:
+        print (file)
         for gene in sequences_dict[file]:
             print (gene)
             print (sequences_dict[file][gene][1])
