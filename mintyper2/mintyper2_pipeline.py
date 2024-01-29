@@ -165,10 +165,11 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
                 diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
                            a != b and ((a == '-' or b == '-') or not (a.islower() or b.islower())))
 
-                #if diff > 0:
-                #    if file_names[i] == 'Ec01_ST410_1':
-                #        if file_names[j] == 'Ec02_ST410_1':
-                #            print(f"{gene} has {diff} differences between {file_names[i]} and {file_names[j]}")
+                if diff > 0:
+                    if file_names[i] == 'Ec02_ST410_1':
+                        if file_names[j] == 'Ec03_ST410_1':
+                            print(f"{gene} has {diff} differences between {file_names[i]} and {file_names[j]}")
+                            print (len(seq1), len(seq2))
                 #            print (realigned_seq1)
                 #            print (realigned_seq2)
                 #            print ('seq1: ', seq1)
