@@ -42,8 +42,6 @@ def mintyper2_pipeline(args):
     """
     gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
     gene_list, non_shared_genes = find_common_genes(args.output)
-    print (gene_list)
-    sys.exit()
     print (len(gene_list))
     print (len(non_shared_genes))
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
