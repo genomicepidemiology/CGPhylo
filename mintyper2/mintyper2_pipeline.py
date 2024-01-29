@@ -11,6 +11,7 @@ def mintyper2_pipeline(args):
     # Run KMA alignment for bacteria mapping
     # Run KMA alignment for cgMLST mapping
     # TBD Build function which excludes samples with the species.
+    # TBD consider is overlapping genes can cause problems.
     """
     if args.nanopore != []:
         for file in args.nanopore:
@@ -40,6 +41,7 @@ def mintyper2_pipeline(args):
             cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
             os.system(cmd)
     """
+
     gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
     gene_list, non_shared_genes = find_common_genes(args.output)
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
@@ -151,7 +153,8 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
                 diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if a != b and not (a.islower() or b.islower()))
 
                 if diff > 0:
-                    print(f"{gene} has {diff} differences between {file_names[i]} and {file_names[j]}")
+                    if file_names[i] == 'Ec01_ST410_1':
+                        print(f"{gene} has {diff} differences between {file_names[i]} and {file_names[j]}")
 
                 # Count differences
                 count += diff
