@@ -299,10 +299,10 @@ def get_species_db_string(top_hit, db_dir):
         db_string = "{}_{}_cgMLST_alleles".format(top_hit.split(' ')[1], top_hit.split(' ')[2])
 
     print (db_string)
-    db_string = db_dir + '/' + db_string + '_consensus_genes'
+    db_string = db_dir + '/' + db_string + '/' + db_string + '_consensus_genes'
 
-    if os.path.exists(db_string):
-        return db_string + '/' + db_string.split('/')[-1] + '_consensus_genes'
+    if os.path.exists(db_string + '.name'):
+        return db_string
     else:
         print (db_string)
         #TBD Do any acutally exist here, instead we want to exclude this sample and give a warning in the log
