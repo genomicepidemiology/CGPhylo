@@ -3,7 +3,7 @@ import sys
 import json
 def mintyper2_pipeline(args):
     """Main function"""
-    """
+
     os.system('mkdir {}'.format(args.output))
     # Run KMA alignment for bacteria mapping
     # Run KMA alignment for cgMLST mapping
@@ -19,6 +19,9 @@ def mintyper2_pipeline(args):
                               args.threads))
             top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
             species_db_string = get_species_db_string(top_template, args.db_dir)
+            gap_map_path = species_db_string[:-5] + 'gap_map.json'
+            print (gap_map_path)
+            sys.exit()
 
             cmd = 'kma -i {} -o {}/{} -t_db {} -ID 90 -md 5 -mct 0.5 -t 8 -mem_mode -dense -ref_fsa -ont'.format(file, args.output, name, species_db_string)
             os.system(cmd)
@@ -30,16 +33,19 @@ def mintyper2_pipeline(args):
                               args.threads))
             top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
             species_db_string = get_species_db_string(top_template, args.db_dir)
+            gap_map_path = species_db_string[:-5] + 'gap_map.json'
+            print (gap_map_path)
+            sys.exit()
             cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
             os.system(cmd)
-    """
+
     gene_list, non_shared_genes = find_common_genes(args.output)
     #print (gene_list)
     print (len(gene_list))
     print (len(non_shared_genes))
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
 
-    file_path = '/home/people/malhal/mintyper2/gap_map.json'
+    gap_map_path = os.path.join(args.db_dir, '', 'gap_map.json')
     gap_map = load_json(file_path)
     distance_matrix, file_names, total_length = calculate_pairwise_distances(file_sequences_dict, gap_map)
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, total_length)
@@ -292,7 +298,7 @@ def get_species_db_string(top_hit, db_dir):
     else:
         db_string = "{}_{}_cgMLST_alleles".format(top_hit.split(' ')[1], top_hit.split(' ')[2])
 
-    db_string = db_dir + '/' + db_string
+    db_string = db_dir + '/' + db_string + '_consensus_genes'
 
     if os.path.exists(db_string):
         return db_string + '/' + db_string.split('/')[-1] + '_complete'

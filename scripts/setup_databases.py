@@ -5,6 +5,9 @@ import sys
 import os
 import logging
 import subprocess
+import json
+from Bio import SeqIO, Align
+from Bio.Align import PairwiseAligner
 
 sys.path = [os.path.join(os.path.dirname(os.path.realpath(__file__)),'..')] + sys.path
 
@@ -15,19 +18,21 @@ def main(args):
     check_kma_installed()
     if not os.path.exists(args.output):
         os.makedirs(args.output)
-    decompress_tar_archive(args.zip, args.output)
+    #decompress_tar_archive(args.zip, args.output)
     allele_folders = os.listdir(args.output)
     for allele_folder in allele_folders:
-        if not allele_folder.startswith('.'):
+        if not allele_folder.startswith('.') and 'bac_db' not in allele_folder:
+
             path = args.output + '/' + allele_folder
+            print (path)
+            """
             rename_alleles(path)
             concat_renamed_fasta_files(path)
             os.system('kma index -i {}/{}_complete.fasta -o {}/{}_complete'.format(path, allele_folder, path, allele_folder))
-            #os.system('rm {}/*.fasta'.format(path))
             # Build consensus alleles
             gene_names = derive_gene_names('{}/{}_complete.name'.format(path, allele_folder))
             gene_lengths = derive_gene_lengths(gene_names, '{}/{}_complete.fasta'.format(path, allele_folder))
-            consensus_genes = derive_consensus_genes(gene_lengths, '{}/{}_complete.fasta'.format(path, allele_folder), gene_names)
+            consensus_genes = derive_consensus_genes(gene_lengths, '{}/{}_complete.fasta'.format(path, allele_folder))
 
             # Writing to file
             with open('{}/{}_consensus_genes.fasta'.format(path, allele_folder), 'w') as f:
@@ -36,9 +41,15 @@ def main(args):
                     f.write(consensus_genes[gene] + '\n')
 
             os.system('kma index -i {}/{}_consensus_genes.fasta -o {}/{}_consensus_genes'.format(path, allele_folder, path, allele_folder))
+            
 
-
-            # Produce gapmap
+            gene_alignments = find_gap_strings("{}/{}_consensus_genes.fasta".format(path, allele_folder))
+            with open('{}/{}_consensus_gap_map.json'.format(path, allele_folder), 'w') as outfile:
+                json.dump(gene_alignments, outfile, indent=4)
+            """
+            os.system('rm {}/*.fasta'.format(path))
+            os.system('rm {}/*complete*'.format(path))
+    # Add bac_db TBD
 
 
 def derive_gene_names(name_file):
@@ -194,6 +205,69 @@ def rename_alleles(path):
 def decompress_tar_archive(path, output):
     """Decompress a tar archive"""
     os.system('tar -xvf {} -C {}'.format(path, output))
+
+def align_sequences(seq_a, seq_b):
+    aligner = PairwiseAligner()
+    aligner.mode = 'global'  # Use global alignment
+    # Set the gap penalties
+    aligner.open_gap_score = -10.0
+    aligner.extend_gap_score = -0.5
+
+    # Set the end gap penalties
+    aligner.target_end_gap_score = -10.0
+    aligner.query_end_gap_score = -10.0
+
+    alignments = aligner.align(seq_a, seq_b)
+    gap_positions_a, gap_positions_b = extract_gap_positions(alignments[0])
+    # Check if the aligned sequences have the same length
+    if len(gap_positions_a) != len(gap_positions_b):
+        print("Error: Aligned sequences do not have the same length.")
+
+    return gap_positions_a, gap_positions_b, alignments[0].format()
+
+def extract_gap_positions(alignment):
+    seqs_alignment = alignment.format()
+    seqs_a_alignment = seqs_alignment.split('\n')[0]
+    seqs_b_alignment = seqs_alignment.split('\n')[2]
+    return seqs_a_alignment, seqs_b_alignment
+
+def find_gap_positions(aligned_sequence):
+    gap_positions = []
+    for i, char in enumerate(aligned_sequence):
+        if char == '-':
+            gap_positions.append(str(i))
+    return ','.join(gap_positions)
+
+def find_gap_strings(fasta_file):
+    sequences = SeqIO.to_dict(SeqIO.parse(fasta_file, "fasta"))
+    gene_sequences = {}
+    gene_alignments = {}
+
+
+    # Group sequences by gene name
+    for header, seq_record in sequences.items():
+        gene_sequences[header] = str(seq_record.seq)
+        gene_alignments[header] = {}
+
+    t = 0
+    for header_a in gene_alignments:
+        gene_a = header_a.split('_')[:-2]
+        gene_a = '_'.join(gene_a)
+        for header_b in gene_alignments:
+            gene_b = header_b.split('_')[:-2]
+            gene_b = '_'.join(gene_b)
+            if gene_a == gene_b and header_a != header_b:
+                if header_b not in gene_alignments[header_a]:
+                    gap_positions_a, gap_positions_b, alignment = align_sequences(gene_sequences[header_a], gene_sequences[header_b])
+                    a_gaps = find_gap_positions(gap_positions_a)
+                    b_gaps = find_gap_positions(gap_positions_b)
+                    gene_alignments[header_a][header_b] = [a_gaps, b_gaps]
+                    gene_alignments[header_b][header_a] = [b_gaps, a_gaps]
+                    t += 1
+                    if t % 100 == 0:
+                        print(t)
+
+    return gene_alignments
 
 
 if __name__ == '__main__':
