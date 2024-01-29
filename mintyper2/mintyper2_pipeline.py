@@ -161,9 +161,14 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
                 if len(realigned_seq1) != len(realigned_seq2):
                     print(f"Warning: {gene} has different lengths between {file_names[i]} and {file_names[j]} after realignment")
 
-                # Modified comparison to skip lowercase nucleotides
+
+                # Dont count gaps test
                 diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
-                           a != b and ((a == '-' or b == '-') or not (a.islower() or b.islower())))
+                           a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
+
+                # Modified comparison to skip lowercase nucleotides
+                #diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
+                #           a != b and ((a == '-' or b == '-') or not (a.islower() or b.islower())))
 
                 if diff > 0:
                     if file_names[i] == 'Ec02_ST410_1':
