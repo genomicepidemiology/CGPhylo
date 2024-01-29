@@ -85,12 +85,24 @@ def load_sequences_from_file(output, gene_list):
 def recreate_alignment(seq, gap_string):
     if not gap_string:
         return seq
+
+    gap_positions = list(map(int, gap_string.split(',')))
+    # Sort gap positions to ensure we insert them in the correct order
+    gap_positions.sort()
+
     result = []
-    gap_positions = set(map(int, gap_string.split(',')))
+    added_gaps = 0
+
     for i, char in enumerate(seq):
-        if i in gap_positions:
+        # Adjust the position for gaps already added
+        while added_gaps < len(gap_positions) and i + added_gaps == gap_positions[added_gaps]:
             result.append('-')
+            added_gaps += 1
         result.append(char)
+
+    # Append remaining gaps if any (in case they are at the end of the sequence)
+    result.extend('-' * (len(gap_positions) - added_gaps))
+
     return ''.join(result)
 
 

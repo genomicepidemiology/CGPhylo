@@ -65,9 +65,10 @@ def find_gap_strings(fasta_file):
 
     return gene_alignments
 
-gene_alignments = find_gap_strings("consensus_genes_2.fasta")
+gene_alignments = find_gap_strings("b2250.fasta")
 
 # Convert to JSON and save to a file
+#print (gene_alignments)
 with open('gap_map.json', 'w') as outfile:
     json.dump(gene_alignments, outfile, indent=4)
 
