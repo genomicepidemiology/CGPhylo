@@ -20,8 +20,6 @@ def mintyper2_pipeline(args):
             top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
             species_db_string = get_species_db_string(top_template, args.db_dir)
             gap_map_path = species_db_string[:-5] + 'gap_map.json'
-            print (gap_map_path)
-            sys.exit()
 
             cmd = 'kma -i {} -o {}/{} -t_db {} -ID 90 -md 5 -mct 0.5 -t 8 -mem_mode -dense -ref_fsa -ont'.format(file, args.output, name, species_db_string)
             os.system(cmd)
@@ -34,8 +32,7 @@ def mintyper2_pipeline(args):
             top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
             species_db_string = get_species_db_string(top_template, args.db_dir)
             gap_map_path = species_db_string[:-5] + 'gap_map.json'
-            print (gap_map_path)
-            sys.exit()
+
             cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
             os.system(cmd)
 
@@ -44,9 +41,7 @@ def mintyper2_pipeline(args):
     print (len(gene_list))
     print (len(non_shared_genes))
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
-
-    gap_map_path = os.path.join(args.db_dir, '', 'gap_map.json')
-    gap_map = load_json(file_path)
+    gap_map = load_json(gap_map_path)
     distance_matrix, file_names, total_length = calculate_pairwise_distances(file_sequences_dict, gap_map)
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, total_length)
     print("The output distance matrix has been normalized to a genome size of 1.000.000. The identified core genes spanned {} bases.".format(total_length), file=sys.stderr)
