@@ -116,11 +116,7 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
     total_length = 0
     print (len(sequences_dict))
     for file in sequences_dict:
-        print (file)
-        print (sequences_dict[file])
         for gene in sequences_dict[file]:
-            print (gene)
-            print (sequences_dict[file][gene][1])
             total_length += len(sequences_dict[file][gene][1])
         break # Only need to do this once
     # Iterate over each pair of files
@@ -262,13 +258,11 @@ def get_species_db_string(top_hit, db_dir):
     else:
         db_string = "{}_{}_cgMLST_alleles".format(top_hit.split(' ')[1], top_hit.split(' ')[2])
 
-    print (db_string)
     db_string = db_dir + '/' + db_string + '/' + db_string + '_consensus_genes'
 
     if os.path.exists(db_string + '.name'):
         return db_string
     else:
-        print (db_string)
         #TBD Do any acutally exist here, instead we want to exclude this sample and give a warning in the log
         sys.exit('No cgMLST database found for species: ' + top_species)
 
