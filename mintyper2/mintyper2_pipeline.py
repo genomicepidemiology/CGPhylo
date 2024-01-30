@@ -8,6 +8,18 @@ def mintyper2_pipeline(args):
     """Main function"""
 
     os.system('mkdir {}'.format(args.output))
+
+    # Check all species
+
+    exclude_list, top_specie = check_all_species(args)
+
+    print (exclude_list, top_specie)
+    sys.exit()
+
+    # Find top hit. and store genome size.
+
+    # Exclude wrong inputs.
+
     # Run KMA alignment for bacteria mapping
     # Run KMA alignment for cgMLST mapping
     # TBD Build function which excludes samples with the species.
@@ -55,6 +67,57 @@ def mintyper2_pipeline(args):
     #distance_matrix_output_name = 'distance_matrix_GS.txt'
     #print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, 1)
     #print ("A distance matrix normalized to a genome size of {} has been outputted. The identified core genes spanned {} bases.".format(total_length, total_length), file=sys.stderr)
+
+
+def check_all_species(args):
+    top_template_count = dict()
+    reference_results = dict()
+
+    if args.nanopore != []:
+        for file in args.nanopore:
+            if len(file.split(' ')) == 1:
+                name = file.split('/')[-1].split('.')[0]
+            else:
+                name = file.split(' ')[0].split('/')[-1].split('.')[0]
+            os.system('kma -i {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
+                      .format(file, args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
+                              args.threads))
+            top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
+            specie = top_template.split('_')[1] + ' ' + top_template.split('_')[2]
+            if specie in top_template_count:
+                top_template_count[specie] += 1
+            else:
+                top_template_count[specie] = 1
+            reference_results[name] = specie
+
+    if args.illumina != []:
+        for i in range(0, len(args.illumina), 2):
+            name = args.illumina[i].split('/')[-1].split('.')[0]
+            os.system('kma -i {} {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
+                      .format(args.illumina[0], args.illumina[1], args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
+                              args.threads))
+            top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
+            specie = top_template.split('_')[1] + ' ' + top_template.split('_')[2]
+            if specie in top_template_count:
+                top_template_count[specie] += 1
+            else:
+                top_template_count[specie] = 1
+            reference_results[name] = specie
+
+    top_specie = max(top_template_count, key=top_template_count.get)
+    print('The most common specie is {} with {} hits.'.format(top_specie, top_template_count[top_specie]))
+
+    exclude_list = []
+
+    for file in reference_results:
+        if reference_results[file] != top_specie:
+            exclude_list.append(file)
+
+    return exclude_list, top_specie
+
+
+
+
 
 def load_json(file_path):
     with open(file_path, 'r') as file:
@@ -166,7 +229,7 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
                 diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
                            a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
 
-                # Modified comparison to skip lowercase nucleotides
+                # Counts gaps. Gaps should not be included in SNPs distances, but consider using this for a another metric in the future.
                 #diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
                 #           a != b and ((a == '-' or b == '-') or not (a.islower() or b.islower())))
 
