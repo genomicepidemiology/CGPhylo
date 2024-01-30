@@ -329,7 +329,7 @@ def get_species_db_string(top_species, db_dir):
     elif top_species in Campylobacter_list:
         db_string = 'Campylobacter_jejuni_coli_cgMLST_alleles'
     else:
-        db_string = "{}_{}_cgMLST_alleles".format(top_hit.split(' ')[1], top_hit.split(' ')[2])
+        db_string = "{}_{}_cgMLST_alleles".format(top_species.split(' ')[1], top_species.split(' ')[2])
 
     db_string = db_dir + '/' + db_string + '/' + db_string + '_consensus_genes'
 
