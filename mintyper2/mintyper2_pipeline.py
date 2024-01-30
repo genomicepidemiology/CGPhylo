@@ -83,7 +83,7 @@ def check_all_species(args):
                       .format(file, args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
             top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
-            specie = top_template.split('_')[1] + ' ' + top_template.split('_')[2]
+            specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
             if specie in top_template_count:
                 top_template_count[specie] += 1
             else:
@@ -97,7 +97,7 @@ def check_all_species(args):
                       .format(args.illumina[0], args.illumina[1], args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
             top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
-            specie = top_template.split('_')[1] + ' ' + top_template.split('_')[2]
+            specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
             if specie in top_template_count:
                 top_template_count[specie] += 1
             else:
