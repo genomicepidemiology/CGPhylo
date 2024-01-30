@@ -12,49 +12,27 @@ def mintyper2_pipeline(args):
     # Check all species
 
     exclude_list, top_specie = check_all_species(args)
+    species_db_string = get_species_db_string(top_specie, args.db_dir)
+    gap_map_path = species_db_string[:-5] + 'gap_map.json'
 
-    print (exclude_list, top_specie)
-    sys.exit()
-
-    # Find top hit. and store genome size.
-
-    # Exclude wrong inputs.
-
-    # Run KMA alignment for bacteria mapping
-    # Run KMA alignment for cgMLST mapping
-    # TBD Build function which excludes samples with the species.
     # TBD consider is overlapping genes can cause problems.
-    """
     if args.nanopore != []:
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
                 name = file.split('/')[-1].split('.')[0]
             else:
                 name = file.split(' ')[0].split('/')[-1].split('.')[0]
-            os.system('kma -i {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
-                      .format(file, args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
-                              args.threads))
-            top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
-            species_db_string = get_species_db_string(top_template, args.db_dir)
-            gap_map_path = species_db_string[:-5] + 'gap_map.json'
-
-            cmd = 'kma -i {} -o {}/{} -t_db {} -ID 90 -md 5 -mct 0.5 -t 8 -mem_mode -dense -ref_fsa -ont'.format(file, args.output, name, species_db_string)
-            os.system(cmd)
+            if not name in exclude_list:
+                cmd = 'kma -i {} -o {}/{} -t_db {} -ID 90 -md 5 -mct 0.5 -t 8 -mem_mode -dense -ref_fsa -ont'.format(file, args.output, name, species_db_string)
+                os.system(cmd)
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
-            os.system('kma -i {} {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
-                      .format(args.illumina[0], args.illumina[1], args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
-                              args.threads))
-            top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
-            species_db_string = get_species_db_string(top_template, args.db_dir)
-            gap_map_path = species_db_string[:-5] + 'gap_map.json'
+            if not name in exclude_list:
+                cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
+                os.system(cmd)
 
-            cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
-            os.system(cmd)
-    """
-
-    gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
+    #gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
     gene_list, non_shared_genes = find_common_genes(args.output)
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     gap_map = load_json(gap_map_path)
@@ -336,9 +314,8 @@ def highest_scoring_hit_spa_file(file_path):
 
     return highest_scoring_template
 
-def get_species_db_string(top_hit, db_dir):
+def get_species_db_string(top_species, db_dir):
     #Update these lists in cgMLST changes are made
-    top_species = top_hit.split(' ')[1] + ' ' + top_hit.split(' ')[2]
     Mycobacterium_list = ['Mycobacterium tuberculosis', 'Mycobacterium bovis', 'Mycobacterium aafricanum', 'Mycobacterium canettii']
     Klebsiella_list = ['Klebsiella pneumoniae', 'Klebsiella variicola', 'Klebsiella quasipneumoniae']
     Cronobacter_list = ['Cronobacter sakazakii', 'Cronobacter malonaticus']
