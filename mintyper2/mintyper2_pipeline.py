@@ -74,9 +74,7 @@ def check_all_species(args):
     reference_results = dict()
 
     if args.nanopore != []:
-        print (args.nanopore)
         for file in args.nanopore:
-            print (file)
             if len(file.split(' ')) == 1:
                 name = file.split('/')[-1].split('.')[0]
             else:
@@ -96,7 +94,7 @@ def check_all_species(args):
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
             os.system('kma -i {} {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
-                      .format(args.illumina[0], args.illumina[1], args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
+                      .format(args.illumina[i], args.illumina[i+1], args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
             top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
             specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
