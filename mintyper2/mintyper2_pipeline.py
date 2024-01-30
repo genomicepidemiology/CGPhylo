@@ -74,7 +74,9 @@ def check_all_species(args):
     reference_results = dict()
 
     if args.nanopore != []:
+        print (args.nanopore)
         for file in args.nanopore:
+            print (file)
             if len(file.split(' ')) == 1:
                 name = file.split('/')[-1].split('.')[0]
             else:
