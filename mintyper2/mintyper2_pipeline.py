@@ -39,8 +39,6 @@ def mintyper2_pipeline(args):
     print (len(non_shared_genes), 'genes not found in all samples (non-shared genes)')
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     gap_map = load_json(gap_map_path)
-    print (gap_map)
-    sys.exit()
     distance_matrix, file_names, total_length = calculate_pairwise_distances(file_sequences_dict, gap_map)
     normalization_factor = 1000000 / total_length
     distance_matrix_output_name = 'distance_matrix_1M.txt'
