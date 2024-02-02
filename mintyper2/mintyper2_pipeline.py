@@ -46,8 +46,6 @@ def mintyper2_pipeline(args):
     distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict, gap_map)
     t2 = time.time()
     print ("Time to calculate distance matrix: ", t2-t1)
-    print (distance_matrix)
-    sys.exit()
     normalization_factor = 1000000 / genome_size
     distance_matrix_output_name = 'distance_matrix_1M.txt'
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, normalization_factor)
@@ -213,6 +211,8 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
     num_files = len(file_names)
     distance_matrix = [[0 for _ in range(num_files)] for _ in range(num_files)]
     # Iterate over each pair of files
+    # TBD consider if this can be done faster
+    # TBD consider if we can use itertools.combinations to avoid comparing the same files twice
     for i in range(num_files):
         for j in range(i + 1, num_files):
             #TBD write a speed compare test. Basically, it is quicker to hash both sequences if they have equal length and then only check the SNPs if hashes don't match
@@ -242,8 +242,12 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
 
 
                 # Dont count gaps test
-                diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
-                           a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
+                #diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
+                #           a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
+
+                if hash(realigned_seq1) != hash(realigned_seq2):
+                    diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
+                               a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
                 #print (diff)
 
                 # Counts gaps. Gaps should not be included in SNPs distances, but consider using this for a another metric in the future.
