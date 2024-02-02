@@ -248,6 +248,8 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
                 if hash(realigned_seq1) != hash(realigned_seq2):
                     diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
                                a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
+                else:
+                    diff = 0
                 #print (diff)
 
                 # Counts gaps. Gaps should not be included in SNPs distances, but consider using this for a another metric in the future.
