@@ -206,12 +206,12 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
 
 
                 # Dont count gaps test
-                diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
-                           a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
+                #diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
+                #           a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
 
                 # Counts gaps. Gaps should not be included in SNPs distances, but consider using this for a another metric in the future.
-                #diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
-                #           a != b and ((a == '-' or b == '-') or not (a.islower() or b.islower())))
+                diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
+                           a != b and ((a == '-' or b == '-') or not (a.islower() or b.islower())))
 
                 if diff > 0:
                     if file_names[i] == 'SRR1188432_1':
