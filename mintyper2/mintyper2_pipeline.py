@@ -42,10 +42,6 @@ def mintyper2_pipeline(args):
     print (len(non_shared_genes), 'genes not found in all samples (non-shared genes)')
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     gap_map = load_json(gap_map_path)
-    t1 = time.time()
-    distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict, gap_map)
-    t2 = time.time()
-    print ("Time to calculate distance matrix: ", t2-t1)
     normalization_factor = 1000000 / genome_size
     distance_matrix_output_name = 'distance_matrix_1M.txt'
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, normalization_factor)
@@ -211,12 +207,8 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
     num_files = len(file_names)
     distance_matrix = [[0 for _ in range(num_files)] for _ in range(num_files)]
     # Iterate over each pair of files
-    # TBD consider if this can be done faster
-    # TBD consider if we can use itertools.combinations to avoid comparing the same files twice
     for i in range(num_files):
         for j in range(i + 1, num_files):
-            #TBD write a speed compare test. Basically, it is quicker to hash both sequences if they have equal length and then only check the SNPs if hashes don't match
-            print (f"Comparing {file_names[i]} and {file_names[j]}")
             count = 0  # Count of differences
 
             # Compare each gene's sequences nucleotide by nucleotide
@@ -242,10 +234,7 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
 
 
                 # Dont count gaps test
-                #diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
-                #           a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
-
-                if hash(realigned_seq1) != hash(realigned_seq2):
+                if realigned_seq1 != realigned_seq2:
                     diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
                                a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
                 else:
