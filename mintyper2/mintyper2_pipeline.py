@@ -14,6 +14,9 @@ def mintyper2_pipeline(args):
     #exclude_list, top_specie = check_all_species(args)
     top_specie = 'Salmonella enterica'
     species_db_string = get_species_db_string(top_specie, args.db_dir)
+    genome_size = find_highest_length_in_spa_files(args.output, top_specie)
+    print (genome_size)
+    sys.exit()
     gap_map_path = species_db_string[:-5] + 'gap_map.json'
 
     """
@@ -97,6 +100,37 @@ def check_all_species(args):
 
     return exclude_list, top_specie
 
+
+def find_highest_length_in_spa_files(directory, species):
+    highest_length = 0
+
+    # Check if the directory exists
+    if not os.path.exists(directory):
+        print(f"Directory '{directory}' does not exist.")
+        return None
+
+    # Loop through all files in the directory
+    for filename in os.listdir(directory):
+        if filename.endswith(".spa"):
+            filepath = os.path.join(directory, filename)
+
+            # Open the .spa file
+            with open(filepath, 'r') as spa_file:
+                # Read each line in the file
+                for line in spa_file:
+                    # Split the line by tab to access the columns
+                    columns = line.strip().split('\t')
+
+                    # Check if the species is a substring in the line
+                    if species in columns[0]:
+                        # Extract the length from the appropriate column
+                        length = int(columns[4])
+
+                        # Update the highest length if necessary
+                        if length > highest_length:
+                            highest_length = length
+
+    return highest_length
 
 
 
