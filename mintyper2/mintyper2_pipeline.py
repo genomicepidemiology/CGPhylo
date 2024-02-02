@@ -39,6 +39,10 @@ def mintyper2_pipeline(args):
     print (len(gene_list), 'genes found in all samples (core genes)')
     print (len(non_shared_genes), 'genes not found in all samples (non-shared genes)')
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
+
+    print (file_sequences_dict)
+    sys.exit()
+
     gap_map = load_json(gap_map_path)
     distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict, gap_map)
     print (distance_matrix)
@@ -123,7 +127,6 @@ def find_highest_length_in_spa_files(directory, species):
                     if species in columns[0]:
                         # Extract the length from the appropriate column
                         length = int(columns[4])
-                        print (length)
 
                         # Update the highest length if necessary
                         if length > highest_length:
