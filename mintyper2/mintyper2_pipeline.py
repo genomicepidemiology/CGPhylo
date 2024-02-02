@@ -206,6 +206,7 @@ def print_distance_matrix_phylip(distance_matrix, file_names, output, distance_m
 def calculate_pairwise_distances(sequences_dict, gap_map):
     file_names = list(sequences_dict.keys())
     num_files = len(file_names)
+    print ('num_files', num_files)
     distance_matrix = [[0 for _ in range(num_files)] for _ in range(num_files)]
     # Iterate over each pair of files
     for i in range(num_files):
@@ -214,6 +215,7 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
 
             # Compare each gene's sequences nucleotide by nucleotide
             for gene in sequences_dict[file_names[i]].keys():
+                print ('gene', gene)
                 seq1 = sequences_dict[file_names[i]][gene][1]  # Get the sequence for the first file
                 seq2 = sequences_dict[file_names[j]][gene][1]  # Get the sequence for the second file
 
