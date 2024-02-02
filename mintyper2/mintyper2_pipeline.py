@@ -3,6 +3,7 @@ import sys
 import json
 import re
 import hashlib
+import time
 
 
 def mintyper2_pipeline(args):
@@ -41,7 +42,10 @@ def mintyper2_pipeline(args):
     print (len(non_shared_genes), 'genes not found in all samples (non-shared genes)')
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     gap_map = load_json(gap_map_path)
+    t1 = time.time()
     distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict, gap_map)
+    t2 = time.time()
+    print ("Time to calculate distance matrix: ", t2-t1)
     print (distance_matrix)
     sys.exit()
     normalization_factor = 1000000 / genome_size
@@ -211,6 +215,7 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
     # Iterate over each pair of files
     for i in range(num_files):
         for j in range(i + 1, num_files):
+            #TBD write a speed compare test. Basically, it is quicker to hash both sequences if they have equal length and then only check the SNPs if hashes don't match
             print (f"Comparing {file_names[i]} and {file_names[j]}")
             count = 0  # Count of differences
 
