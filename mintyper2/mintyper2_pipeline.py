@@ -244,11 +244,11 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
                 #diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
                 #           a != b and ((a == '-' or b == '-') or not (a.islower() or b.islower())))
 
-                if file_names[i] == 'SRR1188432_1':
-                    if file_names[j] == 'SRR1188445_1':
-                        gene_hash_1 = hashlib.md5(realigned_seq1.encode()).hexdigest()
-                        gene_hash_2 = hashlib.md5(realigned_seq2.encode()).hexdigest()
-                        print (gene_hash_1, gene_hash_2)
+                #if file_names[i] == 'SRR1188432_1':
+                #    if file_names[j] == 'SRR1188445_1':
+                #        gene_hash_1 = hashlib.md5(realigned_seq1.encode()).hexdigest()
+                #        gene_hash_2 = hashlib.md5(realigned_seq2.encode()).hexdigest()
+                #        print (gene_hash_1, gene_hash_2)
                 #if diff > 0:
                 #    if file_names[i] == 'SRR1188432_1':
                 #        if file_names[j] == 'SRR1188445_1':
