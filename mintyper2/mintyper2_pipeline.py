@@ -15,8 +15,6 @@ def mintyper2_pipeline(args):
     top_specie = 'Salmonella enterica'
     species_db_string = get_species_db_string(top_specie, args.db_dir)
     genome_size = find_highest_length_in_spa_files(args.output, top_specie)
-    print (genome_size)
-    sys.exit()
     gap_map_path = species_db_string[:-5] + 'gap_map.json'
 
     """
@@ -42,16 +40,16 @@ def mintyper2_pipeline(args):
     print (len(non_shared_genes), 'genes not found in all samples (non-shared genes)')
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     gap_map = load_json(gap_map_path)
-    distance_matrix, file_names, total_length = calculate_pairwise_distances(file_sequences_dict, gap_map)
+    distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict, gap_map)
     print (distance_matrix)
-    normalization_factor = 1000000 / total_length
+    normalization_factor = 1000000 / genome_size
     distance_matrix_output_name = 'distance_matrix_1M.txt'
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, normalization_factor)
-    print("A distance matrix normalized to a genome size of 1.000.000 has been outputted. The identified core genes spanned {} bases.".format(total_length), file=sys.stderr)
+    print("A distance matrix normalized to a genome size of 1.000.000 has been outputted. The identified core genes spanned {} bases.".format(genome_size), file=sys.stderr)
     #TBD should we give an option to give input for normalization factor? Genome size?
     #distance_matrix_output_name = 'distance_matrix_GS.txt'
     #print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, 1)
-    #print ("A distance matrix normalized to a genome size of {} has been outputted. The identified core genes spanned {} bases.".format(total_length, total_length), file=sys.stderr)
+    #print ("A distance matrix normalized to a genome size of {} has been outputted. The identified core genes spanned {} bases.".format(genome_size, genome_size), file=sys.stderr)
 
 
 def check_all_species(args):
@@ -209,11 +207,6 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
     file_names = list(sequences_dict.keys())
     num_files = len(file_names)
     distance_matrix = [[0 for _ in range(num_files)] for _ in range(num_files)]
-    total_length = 0
-    for file in sequences_dict:
-        for gene in sequences_dict[file]:
-            total_length += len(sequences_dict[file][gene][1])
-            print (len(sequences_dict[file][gene][1]))
     # Iterate over each pair of files
     for i in range(num_files):
         for j in range(i + 1, num_files):
@@ -266,7 +259,7 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
             distance_matrix[i][j] = count
             distance_matrix[j][i] = count  # Symmetric matrix
 
-    return distance_matrix, file_names, total_length
+    return distance_matrix, file_names
 
 def find_common_genes(directory_path):
     files = os.listdir(directory_path)
