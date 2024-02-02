@@ -125,6 +125,7 @@ def find_highest_length_in_spa_files(directory, species):
                     if species in columns[0]:
                         # Extract the length from the appropriate column
                         length = int(columns[4])
+                        print (length)
 
                         # Update the highest length if necessary
                         if length > highest_length:
