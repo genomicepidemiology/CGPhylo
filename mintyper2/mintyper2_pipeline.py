@@ -211,6 +211,7 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
     # Iterate over each pair of files
     for i in range(num_files):
         for j in range(i + 1, num_files):
+            print (f"Comparing {file_names[i]} and {file_names[j]}")
             count = 0  # Count of differences
 
             # Compare each gene's sequences nucleotide by nucleotide
