@@ -39,12 +39,11 @@ def mintyper2_pipeline(args):
     gene_list, non_shared_genes = find_common_genes(args.output)
     print (len(gene_list), 'genes found in all samples (core genes)')
     print (len(non_shared_genes), 'genes not found in all samples (non-shared genes)')
-    print (gene_list)
-    sys.exit()
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     gap_map = load_json(gap_map_path)
     distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict, gap_map)
     print (distance_matrix)
+    sys.exit()
     normalization_factor = 1000000 / genome_size
     distance_matrix_output_name = 'distance_matrix_1M.txt'
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, normalization_factor)
@@ -153,7 +152,7 @@ def load_sequences_from_file(output, gene_list):
                     if line.startswith('>'):
                         line = line.strip()
                         allele = line[1:]
-                        gene = line[1:].split('_')[0]
+                        gene = extract_gene_name(allele)
                         if gene in gene_list:
                             file_sequences_dict[name][gene] = [allele, '']
                     if gene != None and gene in gene_list and not line.startswith('>'):
@@ -208,7 +207,6 @@ def print_distance_matrix_phylip(distance_matrix, file_names, output, distance_m
 def calculate_pairwise_distances(sequences_dict, gap_map):
     file_names = list(sequences_dict.keys())
     num_files = len(file_names)
-    print ('num_files', num_files)
     distance_matrix = [[0 for _ in range(num_files)] for _ in range(num_files)]
     # Iterate over each pair of files
     for i in range(num_files):
@@ -217,7 +215,6 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
 
             # Compare each gene's sequences nucleotide by nucleotide
             for gene in sequences_dict[file_names[i]].keys():
-                print ('gene', gene)
                 seq1 = sequences_dict[file_names[i]][gene][1]  # Get the sequence for the first file
                 seq2 = sequences_dict[file_names[j]][gene][1]  # Get the sequence for the second file
 
