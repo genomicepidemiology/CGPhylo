@@ -39,10 +39,6 @@ def mintyper2_pipeline(args):
     print (len(gene_list), 'genes found in all samples (core genes)')
     print (len(non_shared_genes), 'genes not found in all samples (non-shared genes)')
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
-
-    print (file_sequences_dict)
-    sys.exit()
-
     gap_map = load_json(gap_map_path)
     distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict, gap_map)
     print (distance_matrix)
@@ -240,16 +236,17 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
                 # Dont count gaps test
                 diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
                            a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
+                print (diff)
 
                 # Counts gaps. Gaps should not be included in SNPs distances, but consider using this for a another metric in the future.
                 #diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
                 #           a != b and ((a == '-' or b == '-') or not (a.islower() or b.islower())))
 
-                if diff > 0:
-                    if file_names[i] == 'SRR1188432_1':
-                        if file_names[j] == 'SRR1188445_1':
-                            print(f"{gene} has {diff} differences between {file_names[i]} and {file_names[j]}")
-                            print (len(seq1), len(seq2))
+                #if diff > 0:
+                #    if file_names[i] == 'SRR1188432_1':
+                #        if file_names[j] == 'SRR1188445_1':
+                #            print(f"{gene} has {diff} differences between {file_names[i]} and {file_names[j]}")
+                #            print (len(seq1), len(seq2))
                 #            print (realigned_seq1)
                 #            print (realigned_seq2)
                 #            print ('seq1: ', seq1)
