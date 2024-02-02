@@ -40,6 +40,7 @@ def mintyper2_pipeline(args):
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     gap_map = load_json(gap_map_path)
     distance_matrix, file_names, total_length = calculate_pairwise_distances(file_sequences_dict, gap_map)
+    print (distance_matrix)
     normalization_factor = 1000000 / total_length
     distance_matrix_output_name = 'distance_matrix_1M.txt'
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, normalization_factor)
@@ -206,12 +207,12 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
 
 
                 # Dont count gaps test
-                #diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
-                #           a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
+                diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
+                           a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
 
                 # Counts gaps. Gaps should not be included in SNPs distances, but consider using this for a another metric in the future.
-                diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
-                           a != b and ((a == '-' or b == '-') or not (a.islower() or b.islower())))
+                #diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
+                #           a != b and ((a == '-' or b == '-') or not (a.islower() or b.islower())))
 
                 if diff > 0:
                     if file_names[i] == 'SRR1188432_1':
