@@ -10,12 +10,12 @@ import logging
 
 def mintyper2_pipeline(args):
     """Main function"""
+    os.system('mkdir {}'.format(args.output))
+
     logging.basicConfig(
         format='%(asctime)s %(message)s',
         filename=args.output + '/cgphylo.log',
         level=logging.INFO)
-
-    os.system('mkdir {}'.format(args.output))
 
     # Check all species
 
