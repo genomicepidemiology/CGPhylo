@@ -4,19 +4,27 @@ import json
 import re
 import hashlib
 import time
+import logging
+
 
 
 def mintyper2_pipeline(args):
     """Main function"""
+    logging.basicConfig(
+        format='%(asctime)s %(message)s',
+        filename=args.output + '/cgphylo.log',
+        level=logging.INFO)
 
     os.system('mkdir {}'.format(args.output))
 
     # Check all species
 
     exclude_list, top_specie = check_all_species(args)
+    logging.info('Top species: {}'.format(top_specie))
     #top_specie = 'Salmonella enterica'
     species_db_string = get_species_db_string(top_specie, args.db_dir)
     genome_size = find_highest_length_in_spa_files(args.output, top_specie)
+    logging.info('Genome size: {}'.format(genome_size))
     gap_map_path = species_db_string[:-5] + 'gap_map.json'
 
     if args.nanopore != []:
@@ -37,11 +45,16 @@ def mintyper2_pipeline(args):
 
     #gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
     gene_list, non_shared_genes = find_common_genes(args.output)
+    logging.info('{} genes found in all samples (core genes)'.format(len(gene_list)))
+    logging.info('{} genes not found in all samples (non-shared genes)'.format(len(non_shared_genes)))
     print (len(gene_list), 'genes found in all samples (core genes)')
     print (len(non_shared_genes), 'genes not found in all samples (non-shared genes)')
     file_sequences_dict = load_sequences_from_file(args.output, gene_list)
     gap_map = load_json(gap_map_path)
     distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict, gap_map)
+    logging.info('Distance matrix: ')
+    for item in distance_matrix:
+        logging.info(item)
     normalization_factor = 1000000 / genome_size
     distance_matrix_output_name = 'distance_matrix_1M.txt'
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, normalization_factor)
