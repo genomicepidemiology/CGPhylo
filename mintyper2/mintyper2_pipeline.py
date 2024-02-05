@@ -23,7 +23,10 @@ def mintyper2_pipeline(args):
     logging.info('Top species: {}'.format(top_specie))
     #top_specie = 'Salmonella enterica'
     species_db_string = get_species_db_string(top_specie, args.db_dir)
-    genome_size = find_highest_length_in_spa_files(args.output, top_specie)
+    genome_size = get_genome_size(args, top_specie)
+    print (genome_size)
+    sys.exit()
+
     logging.info('Genome size: {}'.format(genome_size))
     gap_map_path = species_db_string[:-5] + 'gap_map.json'
 
@@ -64,6 +67,44 @@ def mintyper2_pipeline(args):
     #print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, 1)
     #print ("A distance matrix normalized to a genome size of {} has been outputted. The identified core genes spanned {} bases.".format(genome_size, genome_size), file=sys.stderr)
 
+
+def get_genome_size(args, top_specie):
+    top_dict = {}
+    file_list = os.listdir(args.output)
+    for file in file_list:
+        if file.startswith('species_mapping_'):
+            with open(args.output + '/' + file, 'r') as f:
+                for line in f:
+                    num = line.split('\t')[1]
+                    if top_specie in line:
+                        if num in top_dict:
+                            top_dict[num] += 1
+                        else:
+                            top_dict[num] = 1
+    top_num = max(top_dict, key=top_dict.get)
+    os.system('kma seq2fasta -t_db {} -seqs {} > {}/top_species.fasta'.format(args.db_dir + '/bac_db/bac_db', top_num, args.output))
+    genome_size = count_nucleotides(args.output + '/top_species.fasta')
+    return genome_size
+
+def count_nucleotides(fasta_file):
+    nucleotide_count = 0
+
+    with open(fasta_file, 'r') as file:
+        sequence_started = False
+
+        for line in file:
+            line = line.strip()
+
+            if line.startswith('>'):
+                # Skip sequence identifier lines
+                if sequence_started:
+                    break
+            else:
+                # Count nucleotides in the sequence
+                nucleotide_count += len(line)
+                sequence_started = True
+
+    return nucleotide_count
 
 def check_all_species(args):
     top_template_count = dict()
