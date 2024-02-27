@@ -24,8 +24,6 @@ def mintyper2_pipeline(args):
     #top_specie = 'Salmonella enterica'
     species_db_string = get_species_db_string(top_specie, args.db_dir)
     genome_size = get_genome_size(args, top_specie)
-    print (genome_size)
-    sys.exit()
 
     logging.info('Genome size: {}'.format(genome_size))
     gap_map_path = species_db_string[:-5] + 'gap_map.json'
@@ -52,13 +50,16 @@ def mintyper2_pipeline(args):
     logging.info('{} genes not found in all samples (non-shared genes)'.format(len(non_shared_genes)))
     print (len(gene_list), 'genes found in all samples (core genes)')
     print (len(non_shared_genes), 'genes not found in all samples (non-shared genes)')
-    file_sequences_dict = load_sequences_from_file(args.output, gene_list)
+    file_sequences_dict, cg_nucleotide_count = load_sequences_from_file(args.output, gene_list)
+    print ('The core genes spanned {} bases.'.format(cg_nucleotide_count))
+    logging.info('The core genes spanned {} bases.'.format(cg_nucleotide_count))
     gap_map = load_json(gap_map_path)
     distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict, gap_map)
     logging.info('Distance matrix: ')
     for item in distance_matrix:
         logging.info(item)
-    normalization_factor = 1000000 / genome_size
+    #TBD consider if this normalization is the best way to do it and is correct?
+    normalization_factor = 1000000 / cg_nucleotide_count
     distance_matrix_output_name = 'distance_matrix_1M.txt'
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, normalization_factor)
     print("A distance matrix normalized to a genome size of 1.000.000 has been outputted. The identified core genes spanned {} bases.".format(genome_size), file=sys.stderr)
@@ -195,8 +196,10 @@ def load_json(file_path):
 def load_sequences_from_file(output, gene_list):
     file_sequences_dict = dict()
     files = os.listdir(output)
+    highest_nucleotide_count = 0
     for file in files:
         if file.endswith('.fsa'):
+            current_nucleotide_count = 0
             name = file.split('.')[0]
             file_sequences_dict[name] = dict()
             with open(os.path.join(output, file), 'r') as f:
@@ -209,7 +212,10 @@ def load_sequences_from_file(output, gene_list):
                             file_sequences_dict[name][gene] = [allele, '']
                     if gene != None and gene in gene_list and not line.startswith('>'):
                         file_sequences_dict[name][gene][1] += line.strip()
-    return file_sequences_dict
+                        current_nucleotide_count += len(line.strip())
+            if current_nucleotide_count > highest_nucleotide_count:
+                highest_nucleotide_count = current_nucleotide_count
+    return file_sequences_dict, highest_nucleotide_count
 
 
 
