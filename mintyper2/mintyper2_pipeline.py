@@ -27,7 +27,7 @@ def mintyper2_pipeline(args):
 
     logging.info('Genome size: {}'.format(genome_size))
     gap_map_path = species_db_string[:-5] + 'gap_map.json'
-
+    """
     if args.nanopore != []:
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
@@ -43,7 +43,7 @@ def mintyper2_pipeline(args):
             if not name in exclude_list:
                 cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
                 os.system(cmd)
-
+    """
     #gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
     gene_list, non_shared_genes = find_common_genes(args.output)
     logging.info('{} genes found in all samples (core genes)'.format(len(gene_list)))
