@@ -26,8 +26,8 @@ def calculate_rmse(matrix1, matrix2):
     return rmse
 
 # Placeholder filenames with the provided paths
-filename1 = '/home/people/malhal/papers/cgphylo/mashtree/aureus_ont/corrected_matrix'
-filename2 = '/home/people/malhal/papers/cgphylo/cgphylo/results/aureus_ont/corrected_distance_matrix_1M.txt'
+filename1 = '/home/people/malhal/papers/cgphylo/mashtree/ecoli/corrected_matrix'
+filename2 = '/home/people/malhal/papers/cgphylo/cgphylo/results/ecoli/corrected_distance_matrix_1M.txt'
 
 # Load the matrices
 matrix1 = load_phylip_matrix(filename1)
