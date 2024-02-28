@@ -119,7 +119,9 @@ def check_all_species(args):
             os.system('kma -i {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
                       .format(file, args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
-            top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
+            spa_file = args.output + '/species_mapping_' + name + '.spa'
+            print (spa_file)
+            top_template = highest_scoring_hit_spa_file(spa_file)
             print (top_template)
             specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
             if specie in top_template_count:
