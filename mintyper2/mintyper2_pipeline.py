@@ -17,7 +17,7 @@ def mintyper2_pipeline(args):
         filename=args.output + '/cgphylo.log',
         level=logging.INFO)
 
-    # Check all species
+    ## Check all species
 
     exclude_list, top_specie = check_all_species(args)
     logging.info('Top species: {}'.format(top_specie))
@@ -120,29 +120,35 @@ def check_all_species(args):
                       .format(file, args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
             spa_file = args.output + '/species_mapping_' + name + '.spa'
-            print (spa_file)
             top_template = highest_scoring_hit_spa_file(spa_file)
-            print (top_template)
-            specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
-            if specie in top_template_count:
-                top_template_count[specie] += 1
+            if top_template != '':
+                specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
+                if specie in top_template_count:
+                    top_template_count[specie] += 1
+                else:
+                    top_template_count[specie] = 1
+                reference_results[name] = specie
             else:
-                top_template_count[specie] = 1
-            reference_results[name] = specie
-
+                reference_results[name] = 'No hits found'
+                logging.info('No hits found for nanopore file: {}'.format(file))
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
             os.system('kma -i {} {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
                       .format(args.illumina[i], args.illumina[i+1], args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
-            top_template = highest_scoring_hit_spa_file(args.output + '/species_mapping_' + name + '.spa')
-            specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
-            if specie in top_template_count:
-                top_template_count[specie] += 1
+            spa_file = args.output + '/species_mapping_' + name + '.spa'
+            top_template = highest_scoring_hit_spa_file(spa_file)
+            if top_template != '':
+                specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
+                if specie in top_template_count:
+                    top_template_count[specie] += 1
+                else:
+                    top_template_count[specie] = 1
+                reference_results[name] = specie
             else:
-                top_template_count[specie] = 1
-            reference_results[name] = specie
+                reference_results[name] = 'No hits found'
+                logging.info('No hits found for nanopore file: {}'.format(file))
 
     top_specie = max(top_template_count, key=top_template_count.get)
     print('The most common specie is {} with {} hits.'.format(top_specie, top_template_count[top_specie]))
@@ -412,6 +418,10 @@ def highest_scoring_hit_spa_file(file_path):
             except ValueError:
                 # Skip line if score is not an integer or line is malformed
                 continue
+
+    if highest_scoring_template == "":
+        print(f"Warning: No highest scoring template found in {file_path}")
+
 
     return highest_scoring_template
 
