@@ -23,9 +23,8 @@ def mintyper2_pipeline(args):
     logging.info('Top species: {}'.format(top_specie))
     #top_specie = 'Salmonella enterica'
     species_db_string = get_species_db_string(top_specie, args.db_dir)
-    genome_size = get_genome_size(args, top_specie)
+    #genome_size = get_genome_size(args, top_specie)
 
-    logging.info('Genome size: {}'.format(genome_size))
     gap_map_path = species_db_string[:-5] + 'gap_map.json'
     """
     if args.nanopore != []:
@@ -62,7 +61,7 @@ def mintyper2_pipeline(args):
     normalization_factor = 1000000 / cg_nucleotide_count
     distance_matrix_output_name = 'distance_matrix_1M.txt'
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, normalization_factor)
-    print("A distance matrix normalized to a genome size of 1.000.000 has been outputted. The identified core genes spanned {} bases.".format(genome_size), file=sys.stderr)
+    print("A distance matrix normalized to a genome size of 1.000.000 has been outputted. The identified core genes spanned {} bases.".format(cg_nucleotide_count), file=sys.stderr)
     #TBD should we give an option to give input for normalization factor? Genome size?
     #distance_matrix_output_name = 'distance_matrix_GS.txt'
     #print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, 1)

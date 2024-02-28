@@ -2,7 +2,7 @@ from Bio import Phylo
 import numpy as np
 
 # Load Newick file
-newick_file = '/home/people/malhal/papers/cgphylo/MINTyper/results/mintyper_illumina_no_prune/tree_taxa.newick'
+newick_file = 'mod_tree.newick'
 
 # Function to calculate distance matrix and sorted taxa labels
 def calculate_distance_matrix(tree):
@@ -19,12 +19,12 @@ def calculate_distance_matrix(tree):
 
 # Function to print the distance matrix in the specified format
 def print_formatted_matrix(matrix, taxa):
-    print(f"{'':<20}", f"{len(taxa)}")
+    n = len(taxa)
+    print(n)  # First line is the number of taxa
     for i, taxon in enumerate(taxa):
-        print(f"{taxon:<20}", end='')
-        for j in range(i):
-            print(f"{int(matrix[i, j]):<20}", end='')
-        print()  # New line at the end of each row
+        # Print taxon name followed by distances, tab-separated
+        distances = '\t'.join(f"{matrix[i, j]:.5f}" for j in range(n))
+        print(f"{taxon}\t{distances}")
 
 # Read the Newick tree
 tree = Phylo.read(newick_file, 'newick')
