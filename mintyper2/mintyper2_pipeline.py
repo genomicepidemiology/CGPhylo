@@ -99,6 +99,7 @@ def check_all_species_with_mash(args):
                     if line.startswith(top_template):
                         line = line.split()
                         specie = line[1] + ' ' + line[2]
+                        print (specie)
             reference_results[name] = specie
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
@@ -111,6 +112,7 @@ def check_all_species_with_mash(args):
                     if line.startswith(top_template):
                         line = line.split()
                         specie = line[1] + ' ' + line[2]
+                        print(specie)
             reference_results[name] = specie
 
     print (reference_results)
