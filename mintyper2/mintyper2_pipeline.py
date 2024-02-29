@@ -119,10 +119,13 @@ def check_all_species_with_mash(args):
                             top_template_count[specie] = 1
                         reference_results[name] = specie
 
+    print (top_template_count)
+
     top_specie = max(top_template_count, key=top_template_count.get)
     print('The most common specie is {} with {} hits.'.format(top_specie, top_template_count[top_specie]))
 
     exclude_list = []
+
 
     for file in reference_results:
         print(file, reference_results[file])
