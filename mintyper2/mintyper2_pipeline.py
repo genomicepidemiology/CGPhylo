@@ -100,7 +100,7 @@ def check_all_species_with_mash(args):
                         line = line.split()
                         specie = line[1] + ' ' + line[2]
                         print (specie)
-            reference_results[name] = specie
+                        reference_results[name] = specie
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
@@ -113,7 +113,7 @@ def check_all_species_with_mash(args):
                         line = line.split()
                         specie = line[1] + ' ' + line[2]
                         print(specie)
-            reference_results[name] = specie
+                        reference_results[name] = specie
 
     print (reference_results)
     sys.exit()
