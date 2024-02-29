@@ -2,7 +2,7 @@ from Bio import Phylo
 import numpy as np
 
 # Load Newick file
-newick_file = 'mod_tree.newick'
+newick_file = 'new_name_tree.newick'
 
 # Function to calculate distance matrix and sorted taxa labels
 def calculate_distance_matrix(tree):

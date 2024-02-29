@@ -10,6 +10,7 @@ import logging
 
 def mintyper2_pipeline(args):
     """Main function"""
+
     os.system('mkdir {}'.format(args.output))
 
     logging.basicConfig(
@@ -19,7 +20,9 @@ def mintyper2_pipeline(args):
 
     ## Check all species
 
+    #Benchmark time for species check, consider swapping it with mash for faster run time TBD
     exclude_list, top_specie = check_all_species(args)
+    sys.exit()
     logging.info('Top species: {}'.format(top_specie))
     #top_specie = 'Salmonella enterica'
     species_db_string = get_species_db_string(top_specie, args.db_dir)
@@ -63,9 +66,13 @@ def mintyper2_pipeline(args):
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, normalization_factor)
     print("A distance matrix normalized to a genome size of 1.000.000 has been outputted. The identified core genes spanned {} bases.".format(cg_nucleotide_count), file=sys.stderr)
     #TBD should we give an option to give input for normalization factor? Genome size?
-    #distance_matrix_output_name = 'distance_matrix_GS.txt'
-    #print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, 1)
+    run_ccphylo(args.output + '/' + distance_matrix_output_name, args.output + '/tree.newick')
     #print ("A distance matrix normalized to a genome size of {} has been outputted. The identified core genes spanned {} bases.".format(genome_size, genome_size), file=sys.stderr)
+
+
+def run_ccphylo(distance_matrix_file, output_file):
+    cmd = 'ccphylo tree --input {} --output {}'.format(distance_matrix_file, output_file)
+    os.system(cmd)
 
 
 def get_genome_size(args, top_specie):
@@ -156,6 +163,7 @@ def check_all_species(args):
     exclude_list = []
 
     for file in reference_results:
+        print (file, reference_results[file])
         if reference_results[file] != top_specie:
             exclude_list.append(file)
 

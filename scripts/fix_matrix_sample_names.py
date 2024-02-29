@@ -4,6 +4,7 @@ def process_matrix_file(input_file_path, output_file_path):
             parts = line.strip().split('\t')
             if parts[0]:  # Check if there's a sample name to process
                 # Process the sample name
+                parts[0] = parts[0].split('.')[0]
                 sample_name_parts = parts[0].split('_')[:2]
                 new_sample_name = '_'.join(sample_name_parts)
                 parts[0] = new_sample_name
@@ -13,10 +14,11 @@ def process_matrix_file(input_file_path, output_file_path):
 # Define the input and output file paths
 #input_files = ['distance_matrix_1M.txt']
 #input_files = ['distmatrix.txt']
+input_files = ['corrected_matrix']
 #output_files = ['corrected_distance_matrix_1M.txt']
-#output_files = ['corrected_distmatrix.txt']
-input_files = ['phylip_matrix']
-output_files = ['corrected_matrix']
+output_files = ['corrected_matrix_final']
+#input_files = ['phylip_matrix']
+#output_files = ['corrected_matrix']
 
 
 # Process each file
