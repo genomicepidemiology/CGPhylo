@@ -21,6 +21,8 @@ def mintyper2_pipeline(args):
     ## Check all species
 
     #Benchmark time for species check, consider swapping it with mash for faster run time TBD
+    check_all_species_with_mash(args)
+
     exclude_list, top_specie = check_all_species(args)
     sys.exit()
     logging.info('Top species: {}'.format(top_specie))
@@ -50,6 +52,7 @@ def mintyper2_pipeline(args):
     gene_list, non_shared_genes = find_common_genes(args.output)
     logging.info('{} genes found in all samples (core genes)'.format(len(gene_list)))
     logging.info('{} genes not found in all samples (non-shared genes)'.format(len(non_shared_genes)))
+    #TBD build function to guard against samples which find no genes. Also output in log
     print (len(gene_list), 'genes found in all samples (core genes)')
     print (len(non_shared_genes), 'genes not found in all samples (non-shared genes)')
     file_sequences_dict, cg_nucleotide_count = load_sequences_from_file(args.output, gene_list)
@@ -69,6 +72,85 @@ def mintyper2_pipeline(args):
     run_ccphylo(args.output + '/' + distance_matrix_output_name, args.output + '/tree.newick')
     #print ("A distance matrix normalized to a genome size of {} has been outputted. The identified core genes spanned {} bases.".format(genome_size, genome_size), file=sys.stderr)
 
+#TBD CONTINUE HERE
+def check_all_species_with_mash(args):
+    # To make db mash sketch -p 8 -o test -i bac_db.fasta
+    # Sketch input mash sketch -o ecoli_test ~/data/cgphylo/ecoli/SRR3736562* # Does this for PE or do I need to do it for both?
+    # mash dist test.msh ecoli_test.msh > mash_results
+    # mash info test.msh
+    # Mash top hit to get NC<string> and use that to get template
+
+
+    top_template_count = dict()
+    reference_results = dict()
+
+    if args.nanopore != []:
+        for file in args.nanopore:
+            if len(file.split(' ')) == 1:
+                name = file.split('/')[-1].split('.')[0]
+            else:
+                name = file.split(' ')[0].split('/')[-1].split('.')[0]
+
+            os.system('mash sketch -o {}/{}.msh -p 8 -i {}'.format(args.output, name, file))
+            os.system('mash dist {}/{}.msh {} > {}/{}_mash_results.txt'.format(args.output, name, args.db_dir + '/bac_db/bac_db.msh', args.output, name))
+            top_template = find_highest_overlap_mash(args.output + '/' + name + '_mash_results.txt')
+            with open(args.db_dir + '/bac_db/bac_db.name', 'r') as f:
+                for line in f:
+                    if line.startswith(top_template):
+                        line = line.split()
+                        specie = line[1] + ' ' + line[2]
+            reference_results[name] = specie
+    if args.illumina != []:
+        for i in range(0, len(args.illumina), 2):
+            name = args.illumina[i].split('/')[-1].split('.')[0]
+            os.system('mash sketch -o {}/{}.msh -p 8 -i {} {}'.format(args.output, name, args.illumina[i], args.illumina[i+1]))
+            os.system('mash dist {}/{}.msh {} > {}/{}_mash_results.txt'.format(args.output, name, args.db_dir + '/bac_db/bac_db.msh', args.output, name))
+            top_template = find_highest_overlap_mash(args.output + '/' + name + '_mash_results.txt')
+            with open(args.db_dir + '/bac_db/bac_db.name', 'r') as f:
+                for line in f:
+                    if line.startswith(top_template):
+                        line = line.split()
+                        specie = line[1] + ' ' + line[2]
+            reference_results[name] = specie
+
+    print (reference_results)
+    sys.exit()
+
+    top_specie = max(top_template_count, key=top_template_count.get)
+    print('The most common specie is {} with {} hits.'.format(top_specie, top_template_count[top_specie]))
+
+    exclude_list = []
+
+    for file in reference_results:
+        print(file, reference_results[file])
+        if reference_results[file] != top_specie:
+            exclude_list.append(file)
+
+    return exclude_list, top_specie
+
+def find_highest_overlap_mash(mash_results_file):
+    highest_overlap_reference = None
+    highest_overlap_count = -1
+    highest_identity_score = -1.0
+
+    with open(mash_results_file, 'r') as file:
+        for line in file:
+            parts = line.strip().split('\t')
+            if len(parts) < 5:
+                continue  # Skip incomplete lines
+
+            reference, _, identity_score, _, overlap = parts
+            identity_score = float(identity_score)
+            overlap_count = int(overlap.split('/')[0])
+
+            # Update if this line has a higher overlap or equal overlap with a higher identity score
+            if overlap_count > highest_overlap_count or (
+                    overlap_count == highest_overlap_count and identity_score > highest_identity_score):
+                highest_overlap_reference = reference
+                highest_overlap_count = overlap_count
+                highest_identity_score = identity_score
+
+    return highest_overlap_reference
 
 def run_ccphylo(distance_matrix_file, output_file):
     cmd = 'ccphylo tree --input {} --output {}'.format(distance_matrix_file, output_file)
