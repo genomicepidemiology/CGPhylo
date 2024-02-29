@@ -91,7 +91,7 @@ def check_all_species_with_mash(args):
             else:
                 name = file.split(' ')[0].split('/')[-1].split('.')[0]
 
-            os.system('mash sketch -o {}/{}.msh -p 8 -I {}'.format(args.output, name, file))
+            os.system('mash sketch -o {}/{}.msh -p 8 {}'.format(args.output, name, file))
             os.system('mash dist {}/{}.msh {} > {}/{}_mash_results.txt'.format(args.output, name, args.db_dir + '/bac_db/bac_db.msh', args.output, name))
             top_template = find_highest_overlap_mash(args.output + '/' + name + '_mash_results.txt')
             with open(args.db_dir + '/bac_db/bac_db.name', 'r') as f:
@@ -104,7 +104,7 @@ def check_all_species_with_mash(args):
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
-            os.system('mash sketch -o {}/{}.msh -p 8 -I {} {}'.format(args.output, name, args.illumina[i], args.illumina[i+1]))
+            os.system('mash sketch -o {}/{}.msh -p 8 {} {}'.format(args.output, name, args.illumina[i], args.illumina[i+1]))
             os.system('mash dist {}/{}.msh {} > {}/{}_mash_results.txt'.format(args.output, name, args.db_dir + '/bac_db/bac_db.msh', args.output, name))
             top_template = find_highest_overlap_mash(args.output + '/' + name + '_mash_results.txt')
             with open(args.db_dir + '/bac_db/bac_db.name', 'r') as f:
