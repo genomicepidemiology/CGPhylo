@@ -21,7 +21,9 @@ def mintyper2_pipeline(args):
     ## Check all species
 
     #Benchmark time for species check, consider swapping it with mash for faster run time TBD
-    check_all_species_with_mash(args)
+    exclude_list, top_specie = check_all_species_with_mash(args)
+    print (exclude_list, top_specie)
+    sys.exit()
 
     exclude_list, top_specie = check_all_species(args)
     sys.exit()
@@ -74,13 +76,6 @@ def mintyper2_pipeline(args):
 
 #TBD CONTINUE HERE
 def check_all_species_with_mash(args):
-    # To make db mash sketch -p 8 -o test -i bac_db.fasta
-    # Sketch input mash sketch -o ecoli_test ~/data/cgphylo/ecoli/SRR3736562* # Does this for PE or do I need to do it for both?
-    # mash dist test.msh ecoli_test.msh > mash_results
-    # mash info test.msh
-    # Mash top hit to get NC<string> and use that to get template
-
-
     top_template_count = dict()
     reference_results = dict()
 
@@ -100,7 +95,10 @@ def check_all_species_with_mash(args):
                     if line.startswith(top_template):
                         line = line.split()
                         specie = line[1] + ' ' + line[2]
-                        print (specie)
+                        if specie in top_template_count:
+                            top_template_count[specie] += 1
+                        else:
+                            top_template_count[specie] = 1
                         reference_results[name] = specie
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
@@ -114,11 +112,12 @@ def check_all_species_with_mash(args):
                     if line.startswith(top_template):
                         line = line.split()
                         specie = line[1] + ' ' + line[2]
-                        print(specie)
                         reference_results[name] = specie
-
-    print (reference_results)
-    sys.exit()
+                        if specie in top_template_count:
+                            top_template_count[specie] += 1
+                        else:
+                            top_template_count[specie] = 1
+                        reference_results[name] = specie
 
     top_specie = max(top_template_count, key=top_template_count.get)
     print('The most common specie is {} with {} hits.'.format(top_specie, top_template_count[top_specie]))
