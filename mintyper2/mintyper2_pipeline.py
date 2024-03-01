@@ -87,8 +87,8 @@ def check_all_species_with_mash(args):
             else:
                 name = file.split(' ')[0].split('/')[-1].split('.')[0]
 
-            #os.system('mash sketch -o {}/{}.msh -p 8 -s 25000 {}'.format(args.output, name, file))
-            #os.system('mash dist {} {}/{}.msh > {}/{}_mash_results.txt'.format(args.db_dir + '/bac_db/25k_bac_db.msh', args.output, name, args.output, name))
+            os.system('mash sketch -o {}/{}.msh -p 8 -s 25000 {}'.format(args.output, name, file))
+            os.system('mash dist {} {}/{}.msh > {}/{}_mash_results.txt'.format(args.db_dir + '/bac_db/25k_bac_db.msh', args.output, name, args.output, name))
             top_template = find_highest_overlap_mash(args.output + '/' + name + '_mash_results.txt')
             print (top_template)
             with open(args.db_dir + '/bac_db/bac_db.name', 'r') as f:
