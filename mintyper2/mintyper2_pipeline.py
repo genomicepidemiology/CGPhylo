@@ -19,23 +19,12 @@ def mintyper2_pipeline(args):
         level=logging.INFO)
 
     ## Check all species
-
-    #Benchmark time for species check, consider swapping it with mash for faster run time TBD
-    # Time both check_all_species_with_mash and check_all_species
-    t1 = time.time()
+    # TBD include a specie check time for the article. This is not really necessary for the pipeline, but it good for catching errors.
+    # TBD make a function which creates a sketch of 3-5 files and used the top hit as the specie. For trusted input.
     exclude_list, top_specie = check_all_species_with_mash(args)
-    t2 = time.time()
-    print ('MASH')
-    print (exclude_list, top_specie)
+    print ('Top specie: ', top_specie)
+    print ('Exclude list: ', exclude_list)
 
-    t3 = time.time()
-    print ('KMA')
-    exclude_list, top_specie = check_all_species(args)
-    t4 = time.time()
-
-    print('Time for check_all_species_with_mash: ', t2-t1)
-    print('Time for check_all_species: ', t4-t3)
-    sys.exit()
     logging.info('Top species: {}'.format(top_specie))
     #top_specie = 'Salmonella enterica'
     species_db_string = get_species_db_string(top_specie, args.db_dir)
@@ -59,6 +48,8 @@ def mintyper2_pipeline(args):
                 cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
                 os.system(cmd)
 
+
+
     #gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
     gene_list, non_shared_genes = find_common_genes(args.output)
     logging.info('{} genes found in all samples (core genes)'.format(len(gene_list)))
@@ -66,6 +57,7 @@ def mintyper2_pipeline(args):
     #TBD build function to guard against samples which find no genes. Also output in log
     print (len(gene_list), 'genes found in all samples (core genes)')
     print (len(non_shared_genes), 'genes not found in all samples (non-shared genes)')
+    sys.exit()
     file_sequences_dict, cg_nucleotide_count = load_sequences_from_file(args.output, gene_list)
     print ('The core genes spanned {} bases.'.format(cg_nucleotide_count))
     logging.info('The core genes spanned {} bases.'.format(cg_nucleotide_count))
@@ -95,8 +87,8 @@ def check_all_species_with_mash(args):
             else:
                 name = file.split(' ')[0].split('/')[-1].split('.')[0]
 
-            os.system('mash sketch -o {}/{}.msh -p 8 -s 25000 {}'.format(args.output, name, file))
-            os.system('mash dist {} {}/{}.msh > {}/{}_mash_results.txt'.format(args.db_dir + '/bac_db/25k_bac_db.msh', args.output, name, args.output, name))
+            #os.system('mash sketch -o {}/{}.msh -p 8 -s 25000 {}'.format(args.output, name, file))
+            #os.system('mash dist {} {}/{}.msh > {}/{}_mash_results.txt'.format(args.db_dir + '/bac_db/25k_bac_db.msh', args.output, name, args.output, name))
             top_template = find_highest_overlap_mash(args.output + '/' + name + '_mash_results.txt')
             print (top_template)
             with open(args.db_dir + '/bac_db/bac_db.name', 'r') as f:
