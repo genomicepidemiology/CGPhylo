@@ -21,11 +21,20 @@ def mintyper2_pipeline(args):
     ## Check all species
 
     #Benchmark time for species check, consider swapping it with mash for faster run time TBD
+    # Time both check_all_species_with_mash and check_all_species
+    t1 = time.time()
     exclude_list, top_specie = check_all_species_with_mash(args)
+    t2 = time.time()
+    print ('MASH')
     print (exclude_list, top_specie)
-    sys.exit()
 
+    t3 = time.time()
+    print ('KMA')
     exclude_list, top_specie = check_all_species(args)
+    t4 = time.time()
+
+    print('Time for check_all_species_with_mash: ', t2-t1)
+    print('Time for check_all_species: ', t4-t3)
     sys.exit()
     logging.info('Top species: {}'.format(top_specie))
     #top_specie = 'Salmonella enterica'
@@ -100,6 +109,7 @@ def check_all_species_with_mash(args):
                         else:
                             top_template_count[specie] = 1
                         reference_results[name] = specie
+                        print(name, specie)
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
@@ -227,6 +237,7 @@ def check_all_species(args):
             else:
                 reference_results[name] = 'No hits found'
                 logging.info('No hits found for nanopore file: {}'.format(file))
+            print (name, specie)
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
@@ -245,6 +256,9 @@ def check_all_species(args):
             else:
                 reference_results[name] = 'No hits found'
                 logging.info('No hits found for nanopore file: {}'.format(file))
+
+    for item in top_template_count:
+        print(item, top_template_count[item])
 
     top_specie = max(top_template_count, key=top_template_count.get)
     print('The most common specie is {} with {} hits.'.format(top_specie, top_template_count[top_specie]))
