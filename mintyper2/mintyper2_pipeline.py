@@ -79,6 +79,7 @@ def mintyper2_pipeline(args):
 def check_all_species_with_mash(args):
     top_template_count = dict()
     reference_results = dict()
+    exclude_list = []
 
     if args.nanopore != []:
         for file in args.nanopore:
@@ -90,7 +91,7 @@ def check_all_species_with_mash(args):
             os.system('mash sketch -o {}/{}.msh -p 8 -s 25000 {}'.format(args.output, name, file))
             os.system('mash dist {} {}/{}.msh > {}/{}_mash_results.txt'.format(args.db_dir + '/bac_db/25k_bac_db.msh', args.output, name, args.output, name))
             top_template = find_highest_overlap_mash(args.output + '/' + name + '_mash_results.txt')
-            print (top_template)
+            print (top_template, name)
             with open(args.db_dir + '/bac_db/bac_db.name', 'r') as f:
                 for line in f:
                     if line.startswith(top_template):
@@ -101,14 +102,15 @@ def check_all_species_with_mash(args):
                         else:
                             top_template_count[specie] = 1
                         reference_results[name] = specie
-                        print(name, specie)
+                        if specie == '' or specie == None:
+                            exclude_list.append(name)
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
             os.system('mash sketch -o {}/{}.msh -p 8 -s 25000 {} {}'.format(args.output, name, args.illumina[i], args.illumina[i+1]))
             os.system('mash dist {} {}/{}.msh > {}/{}_mash_results.txt'.format(args.db_dir + '/bac_db/25k_bac_db.msh', args.output, name, args.output, name))
             top_template = find_highest_overlap_mash(args.output + '/' + name + '_mash_results.txt')
-            print (top_template)
+            print (top_template, name)
             with open(args.db_dir + '/bac_db/bac_db.name', 'r') as f:
                 for line in f:
                     if line.startswith(top_template):
@@ -120,6 +122,8 @@ def check_all_species_with_mash(args):
                         else:
                             top_template_count[specie] = 1
                         reference_results[name] = specie
+                        if specie == '' or specie == None:
+                            exclude_list.append(name)
 
     for item in top_template_count:
         print (item, top_template_count[item])
@@ -127,7 +131,6 @@ def check_all_species_with_mash(args):
     top_specie = max(top_template_count, key=top_template_count.get)
     print('The most common specie is {} with {} hits.'.format(top_specie, top_template_count[top_specie]))
 
-    exclude_list = []
 
 
     for file in reference_results:
