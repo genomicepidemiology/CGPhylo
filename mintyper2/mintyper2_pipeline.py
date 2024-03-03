@@ -21,11 +21,27 @@ def mintyper2_pipeline(args):
     ## Check all species
     # TBD include a specie check time for the article. This is not really necessary for the pipeline, but it good for catching errors.
     # TBD make a function which creates a sketch of 3-5 files and used the top hit as the specie. For trusted input.
-    exclude_list, top_specie = check_all_species_with_mash(args)
-    print ('Top specie: ', top_specie)
-    print ('Exclude list: ', exclude_list)
+    #exclude_list, top_specie = check_all_species_with_mash(args)
+    #print ('Top specie: ', top_specie)
+    #print ('Exclude list: ', exclude_list)
 
-    logging.info('Top species: {}'.format(top_specie))
+    #logging.info('Top species: {}'.format(top_specie))
+
+    t1 = time.time()
+    exclude_list, top_specie = check_all_species_with_mash(args)
+    t2 = time.time()
+    print('MASH')
+    print(exclude_list, top_specie)
+
+    t3 = time.time()
+    print('KMA')
+    exclude_list, top_specie = check_all_species(args)
+    t4 = time.time()
+
+    print('Time for check_all_species_with_mash: ', t2 - t1)
+    print('Time for check_all_species: ', t4 - t3)
+    sys.exit()
+
     #top_specie = 'Salmonella enterica'
     species_db_string = get_species_db_string(top_specie, args.db_dir)
     ##genome_size = get_genome_size(args, top_specie)
@@ -110,13 +126,13 @@ def check_all_species_with_mash(args):
             os.system('mash sketch -o {}/{}.msh -p 8 -s 25000 {} {}'.format(args.output, name, args.illumina[i], args.illumina[i+1]))
             os.system('mash dist {} {}/{}.msh > {}/{}_mash_results.txt'.format(args.db_dir + '/bac_db/25k_bac_db.msh', args.output, name, args.output, name))
             top_template = find_highest_overlap_mash(args.output + '/' + name + '_mash_results.txt')
-            print (top_template, name)
             with open(args.db_dir + '/bac_db/bac_db.name', 'r') as f:
                 for line in f:
                     if line.startswith(top_template):
                         line = line.split()
                         specie = line[1] + ' ' + line[2]
                         reference_results[name] = specie
+                        print(top_template, name, specie)
                         if specie in top_template_count:
                             top_template_count[specie] += 1
                         else:
