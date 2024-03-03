@@ -107,7 +107,7 @@ def check_all_species_with_mash(args):
             os.system('mash sketch -o {}/{}.msh -p 8 -s 25000 {}'.format(args.output, name, file))
             os.system('mash dist {} {}/{}.msh > {}/{}_mash_results.txt'.format(args.db_dir + '/bac_db/25k_bac_db.msh', args.output, name, args.output, name))
             top_template = find_highest_overlap_mash(args.output + '/' + name + '_mash_results.txt')
-            print (top_template, name)
+
             with open(args.db_dir + '/bac_db/bac_db.name', 'r') as f:
                 for line in f:
                     if line.startswith(top_template):
@@ -117,6 +117,7 @@ def check_all_species_with_mash(args):
                             top_template_count[specie] += 1
                         else:
                             top_template_count[specie] = 1
+                        print(top_template, name, specie)
                         reference_results[name] = specie
                         if specie == '' or specie == None:
                             exclude_list.append(name)
