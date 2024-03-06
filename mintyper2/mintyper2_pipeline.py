@@ -27,20 +27,8 @@ def mintyper2_pipeline(args):
 
     #logging.info('Top species: {}'.format(top_specie))
 
-    t1 = time.time()
-    exclude_list, top_specie = check_all_species_with_mash(args)
-    t2 = time.time()
-    print('MASH')
-    print(exclude_list, top_specie)
-
-    t3 = time.time()
-    print('KMA')
     exclude_list, top_specie = check_all_species(args)
-    t4 = time.time()
-
-    print('Time for check_all_species_with_mash: ', t2 - t1)
-    print('Time for check_all_species: ', t4 - t3)
-    sys.exit()
+    print (exclude_list, top_specie)
 
     #top_specie = 'Salmonella enterica'
     species_db_string = get_species_db_string(top_specie, args.db_dir)
@@ -64,6 +52,7 @@ def mintyper2_pipeline(args):
                 cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
                 os.system(cmd)
 
+    sys.exit()
 
 
     #gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
@@ -227,6 +216,7 @@ def count_nucleotides(fasta_file):
 def check_all_species(args):
     top_template_count = dict()
     reference_results = dict()
+    exclude_list = []
 
     if args.nanopore != []:
         for file in args.nanopore:
@@ -248,6 +238,7 @@ def check_all_species(args):
                 reference_results[name] = specie
             else:
                 reference_results[name] = 'No hits found'
+                exclude_list.append(name)
                 logging.info('No hits found for nanopore file: {}'.format(file))
             print (name, specie)
     if args.illumina != []:
@@ -267,6 +258,7 @@ def check_all_species(args):
                 reference_results[name] = specie
             else:
                 reference_results[name] = 'No hits found'
+                exclude_list.append(name)
                 logging.info('No hits found for nanopore file: {}'.format(file))
 
     for item in top_template_count:
@@ -275,7 +267,6 @@ def check_all_species(args):
     top_specie = max(top_template_count, key=top_template_count.get)
     print('The most common specie is {} with {} hits.'.format(top_specie, top_template_count[top_specie]))
 
-    exclude_list = []
 
     for file in reference_results:
         print (file, reference_results[file])
