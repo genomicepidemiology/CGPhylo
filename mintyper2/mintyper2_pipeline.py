@@ -95,7 +95,7 @@ def fast_species_finder(args):
     excluded_list = []
     top_specie = ''
     if args.nanopore != []:
-        subset = args.nanopore[0:5]
+        subset = " ".join(args.nanopore[0:5])
         os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -Sparse -ss c' \
                   .format(subset, args.output + '/specie_mapping', args.db_dir + '/bac_db/bac_db',
                           args.threads))
@@ -105,9 +105,9 @@ def fast_species_finder(args):
             top_specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
 
     if args.illumina != []:
-        subset = args.illumina[0:10]
-        os.system('kma -i {} {} -o {} -t_db {} -mem_mode -t {} -Sparse -ss c' \
-                  .format(subset[0], subset[1], args.output + '/specie_mapping', args.db_dir + '/bac_db/bac_db',
+        subset = " ".join(args.illumina[0:10])
+        os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -Sparse -ss c' \
+                  .format(subset, args.output + '/specie_mapping', args.db_dir + '/bac_db/bac_db',
                           args.threads))
         spa_file = args.output + '/specie_mapping.spa'
         top_template = highest_scoring_hit_spa_file(spa_file)
