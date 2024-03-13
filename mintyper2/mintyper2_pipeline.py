@@ -27,15 +27,20 @@ def mintyper2_pipeline(args):
 
     #logging.info('Top species: {}'.format(top_specie))
 
-    exclude_list, top_specie = check_all_species(args)
-    print (exclude_list, top_specie)
+    if args.fsf:
+        exclude_list, top_specie = fast_species_finder(args)
+        print (exclude_list, top_specie)
+        sys.exit()
+    else:
+        exclude_list, top_specie = check_all_species(args)
+        print (exclude_list, top_specie)
 
     #top_specie = 'Salmonella enterica'
     species_db_string = get_species_db_string(top_specie, args.db_dir)
     ##genome_size = get_genome_size(args, top_specie)
 
     gap_map_path = species_db_string[:-5] + 'gap_map.json'
-
+    """
     if args.nanopore != []:
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
@@ -51,7 +56,12 @@ def mintyper2_pipeline(args):
             if not name in exclude_list:
                 cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
                 os.system(cmd)
+    """
 
+    # Perhaps a function here to validate that no one file has no genes. This is a common error and should be caught.
+    outliers, non_outliers = find_gene_count_outliers(args.output)
+    print ('Outliers: ', outliers)
+    print ('Non-outliers: ', non_outliers)
     sys.exit()
 
 
@@ -80,7 +90,57 @@ def mintyper2_pipeline(args):
     run_ccphylo(args.output + '/' + distance_matrix_output_name, args.output + '/tree.newick')
     #print ("A distance matrix normalized to a genome size of {} has been outputted. The identified core genes spanned {} bases.".format(genome_size, genome_size), file=sys.stderr)
 
+
+def fast_species_finder(args):
+    excluded_list = []
+    top_specie = ''
+    if args.nanopore != []:
+        subset = args.nanopore[0:5]
+        os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -Sparse -ss c' \
+                  .format(subset, args.output + '/specie_mapping', args.db_dir + '/bac_db/bac_db',
+                          args.threads))
+        spa_file = args.output + '/specie_mapping.spa'
+        top_template = highest_scoring_hit_spa_file(spa_file)
+        if top_template != '':
+            top_specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
+
+    if args.illumina != []:
+        subset = args.illumina[0:10]
+        os.system('kma -i {} {} -o {} -t_db {} -mem_mode -t {} -Sparse -ss c' \
+                  .format(subset[0], subset[1], args.output + '/specie_mapping', args.db_dir + '/bac_db/bac_db',
+                          args.threads))
+        spa_file = args.output + '/specie_mapping.spa'
+        top_template = highest_scoring_hit_spa_file(spa_file)
+        if top_template != '':
+            top_specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
+
+    return excluded_list, top_specie
+
 #TBD CONTINUE HERE
+def find_gene_count_outliers(directory):
+    # List all .res files
+    files = [f for f in os.listdir(directory) if f.endswith('.res')]
+
+    # Initialize a dictionary to store gene counts for each file
+    gene_counts = {}
+
+    # Parse each file and count genes
+    for file in files:
+        with open(os.path.join(directory, file), 'r') as f:
+            gene_count = sum(1 for line in f if not line.startswith('#'))
+            gene_counts[file] = gene_count
+
+    # Calculate median and threshold
+    median_gene_count = sorted(gene_counts.values())[len(gene_counts) // 2]
+    threshold = median_gene_count * 0.25
+
+    # Identify outliers and non-outliers
+    outliers = [file.split('.')[0] for file, count in gene_counts.items() if count <= threshold]
+    non_outliers = [file.split('.')[0] for file, count in gene_counts.items() if count > threshold]
+
+    return outliers, non_outliers
+
+
 def check_all_species_with_mash(args):
     top_template_count = dict()
     reference_results = dict()

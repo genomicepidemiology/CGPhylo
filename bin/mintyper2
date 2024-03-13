@@ -33,6 +33,8 @@ if __name__ == '__main__':
                         help="Directory containing bac_db and *species*_cgMLST_alleles folders")
     parser.add_argument('--threads', action="store", type=int, default=1, dest="threads",
                         help="Number of threads")
+    parser.add_argument('--fsf', action="store_true", default=False, dest="fsf",
+                        help="Fast species finding. This assumes the input in samples are from the same species, not only varifies this from the first 5 samples.")
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
     parser.add_argument('-h', '--help', action='help', help='Show this help message and exit')
 
