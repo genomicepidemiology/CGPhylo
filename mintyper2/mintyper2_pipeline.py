@@ -18,17 +18,9 @@ def mintyper2_pipeline(args):
         filename=args.output + '/cgphylo.log',
         level=logging.INFO)
 
-    ## Check all species
-    # TBD include a specie check time for the article. This is not really necessary for the pipeline, but it good for catching errors.
-    # TBD make a function which creates a sketch of 3-5 files and used the top hit as the specie. For trusted input.
-    #exclude_list, top_specie = check_all_species_with_mash(args)
-    #print ('Top specie: ', top_specie)
-    #print ('Exclude list: ', exclude_list)
-
-    #logging.info('Top species: {}'.format(top_specie))
-
     if args.fsf:
         exclude_list, top_specie = fast_species_finder(args)
+        print ('exclude list')
         print (exclude_list, top_specie)
     else:
         exclude_list, top_specie = check_all_species(args)
@@ -39,7 +31,7 @@ def mintyper2_pipeline(args):
     ##genome_size = get_genome_size(args, top_specie)
 
     gap_map_path = species_db_string[:-5] + 'gap_map.json'
-    """
+
     if args.nanopore != []:
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
@@ -55,14 +47,17 @@ def mintyper2_pipeline(args):
             if not name in exclude_list:
                 cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
                 os.system(cmd)
-    """
+
 
     # Perhaps a function here to validate that no one file has no genes. This is a common error and should be caught.
     outliers, non_outliers = find_gene_count_outliers(args.output)
-    print ('Outliers: ', outliers)
-    print ('Non-outliers: ', non_outliers)
-    sys.exit()
+    if len(outliers) > 0:
+        logging.info('Outliers: {}. These samples failed to identify enough genes to be included in the analysis.'.format(outliers))
+    print ('outliers')
+    print (outliers)
+    print (non_outliers)
 
+    sys.exit()
 
     #gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
     gene_list, non_shared_genes = find_common_genes(args.output)
