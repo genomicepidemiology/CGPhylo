@@ -29,9 +29,7 @@ def mintyper2_pipeline(args):
 
     if args.fsf:
         exclude_list, top_specie = fast_species_finder(args)
-        print ('here')
         print (exclude_list, top_specie)
-        sys.exit()
     else:
         exclude_list, top_specie = check_all_species(args)
         print (exclude_list, top_specie)
@@ -114,8 +112,6 @@ def fast_species_finder(args):
         top_template = highest_scoring_hit_spa_file(spa_file)
         if top_template != '':
             top_specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
-    print ('Top specie: ', top_specie)
-    print (spa_file)
 
     return excluded_list, top_specie
 
