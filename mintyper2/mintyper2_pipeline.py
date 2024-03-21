@@ -31,7 +31,7 @@ def mintyper2_pipeline(args):
     ##genome_size = get_genome_size(args, top_specie)
 
     gap_map_path = species_db_string[:-5] + 'gap_map.json'
-
+    """
     if args.nanopore != []:
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
@@ -47,17 +47,12 @@ def mintyper2_pipeline(args):
             if not name in exclude_list:
                 cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
                 os.system(cmd)
-
+    """
 
     # Perhaps a function here to validate that no one file has no genes. This is a common error and should be caught.
     outliers, non_outliers = find_gene_count_outliers(args.output)
     if len(outliers) > 0:
         logging.info('Outliers: {}. These samples failed to identify enough genes to be included in the analysis.'.format(outliers))
-    print ('outliers')
-    print (outliers)
-    print (non_outliers)
-
-    sys.exit()
 
     #gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
     gene_list, non_shared_genes = find_common_genes(args.output)
