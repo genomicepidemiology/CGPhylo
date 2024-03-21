@@ -31,7 +31,6 @@ def mintyper2_pipeline(args):
     ##genome_size = get_genome_size(args, top_specie)
 
     gap_map_path = species_db_string[:-5] + 'gap_map.json'
-    """
     if args.nanopore != []:
         for file in args.nanopore:
             if len(file.split(' ')) == 1:
@@ -47,7 +46,6 @@ def mintyper2_pipeline(args):
             if not name in exclude_list:
                 cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
                 os.system(cmd)
-    """
 
     # Perhaps a function here to validate that no one file has no genes. This is a common error and should be caught.
     outliers, non_outliers = find_gene_count_outliers(args.output)
@@ -70,6 +68,7 @@ def mintyper2_pipeline(args):
     for item in distance_matrix:
         logging.info(item)
     #TBD consider if this normalization is the best way to do it and is correct?
+    #Does normalization even matter?
     normalization_factor = 1000000 / cg_nucleotide_count
     distance_matrix_output_name = 'distance_matrix_1M.txt'
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, normalization_factor)
