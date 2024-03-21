@@ -61,7 +61,6 @@ def mintyper2_pipeline(args):
     #TBD build function to guard against samples which find no genes. Also output in log
     print (len(gene_list), 'genes found in all samples (core genes)')
     print (len(non_shared_genes), 'genes not found in all samples (non-shared genes)')
-    sys.exit()
     file_sequences_dict, cg_nucleotide_count = load_sequences_from_file(args.output, gene_list)
     print ('The core genes spanned {} bases.'.format(cg_nucleotide_count))
     logging.info('The core genes spanned {} bases.'.format(cg_nucleotide_count))
