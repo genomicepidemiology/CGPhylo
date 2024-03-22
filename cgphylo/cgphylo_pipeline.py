@@ -20,15 +20,10 @@ def mintyper2_pipeline(args):
 
     if args.fsf:
         exclude_list, top_specie = fast_species_finder(args)
-        print ('exclude list')
-        print (exclude_list, top_specie)
     else:
         exclude_list, top_specie = check_all_species(args)
-        print (exclude_list, top_specie)
 
-    #top_specie = 'Salmonella enterica'
     species_db_string = get_species_db_string(top_specie, args.db_dir)
-    ##genome_size = get_genome_size(args, top_specie)
 
     gap_map_path = species_db_string[:-5] + 'gap_map.json'
     if args.nanopore != []:
@@ -46,36 +41,24 @@ def mintyper2_pipeline(args):
             if not name in exclude_list:
                 cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
                 os.system(cmd)
-
-    # Perhaps a function here to validate that no one file has no genes. This is a common error and should be caught.
     outliers, non_outliers = find_gene_count_outliers(args.output)
     if len(outliers) > 0:
         logging.info('Outliers: {}. These samples failed to identify enough genes to be included in the analysis.'.format(outliers))
-
-    #gap_map_path = '/home/people/malhal/databases/cgmlst_dbs/cgmlst_db/Escherichia_coli_cgMLST_alleles/Escherichia_coli_cgMLST_alleles_consensus_gap_map.json'
-    gene_list, non_shared_genes = find_common_genes(args.output)
+    gene_list, non_shared_genes = find_common_genes(args.output, outliers)
     logging.info('{} genes found in all samples (core genes)'.format(len(gene_list)))
     logging.info('{} genes not found in all samples (non-shared genes)'.format(len(non_shared_genes)))
-    #TBD build function to guard against samples which find no genes. Also output in log
-    print (len(gene_list), 'genes found in all samples (core genes)')
-    print (len(non_shared_genes), 'genes not found in all samples (non-shared genes)')
-    file_sequences_dict, cg_nucleotide_count = load_sequences_from_file(args.output, gene_list)
-    print ('The core genes spanned {} bases.'.format(cg_nucleotide_count))
+    file_sequences_dict, cg_nucleotide_count = load_sequences_from_file(args.output, gene_list, outliers)
     logging.info('The core genes spanned {} bases.'.format(cg_nucleotide_count))
     gap_map = load_json(gap_map_path)
     distance_matrix, file_names = calculate_pairwise_distances(file_sequences_dict, gap_map)
     logging.info('Distance matrix: ')
     for item in distance_matrix:
         logging.info(item)
-    #TBD consider if this normalization is the best way to do it and is correct?
-    #Does normalization even matter?
     normalization_factor = 1000000 / cg_nucleotide_count
     distance_matrix_output_name = 'distance_matrix_1M.txt'
     print_distance_matrix_phylip(distance_matrix, file_names, args.output, distance_matrix_output_name, normalization_factor)
     print("A distance matrix normalized to a genome size of 1.000.000 has been outputted. The identified core genes spanned {} bases.".format(cg_nucleotide_count), file=sys.stderr)
-    #TBD should we give an option to give input for normalization factor? Genome size?
     run_ccphylo(args.output + '/' + distance_matrix_output_name, args.output + '/tree.newick')
-    #print ("A distance matrix normalized to a genome size of {} has been outputted. The identified core genes spanned {} bases.".format(genome_size, genome_size), file=sys.stderr)
 
 
 def fast_species_finder(args):
@@ -362,28 +345,30 @@ def load_json(file_path):
         data = json.load(file)
     return data
 
-def load_sequences_from_file(output, gene_list):
+def load_sequences_from_file(output, gene_list, outliers):
     file_sequences_dict = dict()
     files = os.listdir(output)
     highest_nucleotide_count = 0
     for file in files:
         if file.endswith('.fsa'):
-            current_nucleotide_count = 0
-            name = file.split('.')[0]
-            file_sequences_dict[name] = dict()
-            with open(os.path.join(output, file), 'r') as f:
-                for line in f:
-                    if line.startswith('>'):
-                        line = line.strip()
-                        allele = line[1:]
-                        gene = extract_gene_name(allele)
-                        if gene in gene_list:
-                            file_sequences_dict[name][gene] = [allele, '']
-                    if gene != None and gene in gene_list and not line.startswith('>'):
-                        file_sequences_dict[name][gene][1] += line.strip()
-                        current_nucleotide_count += len(line.strip())
-            if current_nucleotide_count > highest_nucleotide_count:
-                highest_nucleotide_count = current_nucleotide_count
+            file_id = file.split('.')[0]
+            if file_id not in outliers:
+                current_nucleotide_count = 0
+                name = file.split('.')[0]
+                file_sequences_dict[name] = dict()
+                with open(os.path.join(output, file), 'r') as f:
+                    for line in f:
+                        if line.startswith('>'):
+                            line = line.strip()
+                            allele = line[1:]
+                            gene = extract_gene_name(allele)
+                            if gene in gene_list:
+                                file_sequences_dict[name][gene] = [allele, '']
+                        if gene != None and gene in gene_list and not line.startswith('>'):
+                            file_sequences_dict[name][gene][1] += line.strip()
+                            current_nucleotide_count += len(line.strip())
+                if current_nucleotide_count > highest_nucleotide_count:
+                    highest_nucleotide_count = current_nucleotide_count
     return file_sequences_dict, highest_nucleotide_count
 
 
@@ -498,23 +483,24 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
 
     return distance_matrix, file_names
 
-def find_common_genes(directory_path):
+def find_common_genes(directory_path, outliers):
     files = os.listdir(directory_path)
 
     gene_lists = []
 
-    # Collect genes from each file
     for file in files:
         if file.endswith('.res'):
-            genes = set()
-            with open(os.path.join(directory_path, file), 'r') as f:
-                for line in f:
-                    if not line.startswith('#'):
-                        line = line.strip().split('\t')
-                        gene = extract_gene_name(line[0])
-                        genes.add(gene)
+            file_id = file.split('.')[0]
+            if file_id not in outliers:
+                genes = set()
+                with open(os.path.join(directory_path, file), 'r') as f:
+                    for line in f:
+                        if not line.startswith('#'):
+                            line = line.strip().split('\t')
+                            gene = extract_gene_name(line[0])
+                            genes.add(gene)
 
-            gene_lists.append(genes)
+                gene_lists.append(genes)
 
     # Find common genes
     common = set(gene_lists[0])

@@ -1,7 +1,7 @@
 import os
 import sys
 
-path = '/home/people/malhal/mintyper2/test/output_cpo_test'
+path = '/home/people/malhal/cgphylo/test/output_cpo_test'
 files = os.listdir(path)
 
 gene_lists = []

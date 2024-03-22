@@ -1,4 +1,4 @@
-name: mintyper2
+name: cgphylo
 channels:
   - bioconda
   - defaults

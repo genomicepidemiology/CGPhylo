@@ -15,7 +15,7 @@ def find_common_elements(matrix):
     # Convert the set back to a list before returning
     return list(common_elements)
 
-path = '/home/people/malhal/mintyper2/test/output_cpo_test'
+path = '/home/people/malhal/cgphylo/test/output_cpo_test'
 files = os.listdir(path)
 
 data = []
