@@ -7,15 +7,6 @@
     <list default="true" id="cbc5ac6c-29b4-420c-a4da-60d902ac48e6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/cgphylo" beforeDir="false" afterPath="$PROJECT_DIR$/bin/cgphylo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cgphylo/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cgphylo/cgphylo_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/cgphylo/cgphylo_pipeline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/paper_scripts/setup_databases.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tmp_scripts/final_subset_100.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tmp_scripts/run_ids.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tmp_scripts/sample.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tmp_scripts/t.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tmp_scripts/test.csv" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,7 +105,7 @@
       <workItem from="1710300941350" duration="2724000" />
       <workItem from="1710979306232" duration="3158000" />
       <workItem from="1711068880595" duration="4717000" />
-      <workItem from="1711323060209" duration="1317000" />
+      <workItem from="1711323060209" duration="2683000" />
     </task>
     <servers />
   </component>

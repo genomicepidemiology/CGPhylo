@@ -1,6 +1,19 @@
+# CGPhylo
+
+CGPhylo is a tool for determining phylogeny between bacterial isolates for which there are core genome MLST schemas ([cgmlst](https://https://www.cgmlst.org/). 
+Phylogeny is determined by comparing the multiple alignments of conserved core genes shared by the input samples.
+
+## Installation
+
+To install CGPhylo run:
+
+```bash
+conda install -c genomicepidemiology cgphylo
+```
+
 ## Database download
 
-The most convinient way (by far) to download the database is to download the pre-indexed database (Current version indexed from december 22nd 2023 cgMLST scheme):
+The most convenient way (by far) to use this tool is to download the pre-indexed database (Current version indexed from december 22nd 2023 cgMLST scheme):
 
 ```
 wget https://cge.cbs.dtu.dk/services/cgphylo/cgmlst_db.tar.gz
@@ -17,6 +30,18 @@ tar -zcvf cgMLST_schemes.tar.gz cgMLST_schemes
 ```
 3.) run the setup_databases.py script found in the scripts folder. This will create the database and index it.
 ```
-python3 setup_databases.py -i cgMLST_schemes.tar.gz -o cgMLST_db
+python3 scripts/setup_databases.py -i cgMLST_schemes.tar.gz -o cgMLST_db
 ```
 
+## Usage
+
+```bash
+cgphylo --nanopore /complete/path/to/input_files/*.fastq.gz --o any_output_name --threads <int, default:4> --db_dir /path/to/cgmlst_db
+```
+
+## License
+
+Apache License 2.0
+
+## Authors
+Malte B. Hallgren
