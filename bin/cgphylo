@@ -11,13 +11,13 @@ import logging
 
 sys.path = [os.path.join(os.path.dirname(os.path.realpath(__file__)),'..')] + sys.path
 
-from cgphylo import mintyper2_pipeline
+from cgphylo import cgphylo_pipeline
 
 from src.version import __version__
 
 def main(args):
     """Main function"""
-    mintyper2_pipeline.mintyper2_pipeline(args)
+    cgphylo_pipeline.cgphylo_pipeline(args)
 
 if __name__ == '__main__':
     # initialize the options parser

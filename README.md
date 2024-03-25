@@ -1,10 +1,10 @@
 ## Database download
 
-The most convinient way to download the database is to download the pre-indexed database (Current version indexed from december 22nd 2023 cgMLST scheme):
+The most convinient way (by far) to download the database is to download the pre-indexed database (Current version indexed from december 22nd 2023 cgMLST scheme):
 
 ```
-wget
-tar -zxvf cgMLST_db.tar.gz
+wget https://cge.cbs.dtu.dk/services/cgphylo/cgmlst_db.tar.gz
+tar -zxvf cgmlst_db.tar.gz
 ```
 
 Alternatively, if you want the newest cgMLST schemes, you can follow these step and setup the database yourself (The database indexing may take several hours, so consider doing it in a detached screen session):

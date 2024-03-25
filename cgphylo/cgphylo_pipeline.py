@@ -8,7 +8,7 @@ import logging
 
 
 
-def mintyper2_pipeline(args):
+def cgphylo_pipeline(args):
     """Main function"""
 
     os.system('mkdir {}'.format(args.output))
@@ -109,96 +109,6 @@ def find_gene_count_outliers(directory):
     non_outliers = [file.split('.')[0] for file, count in gene_counts.items() if count > threshold]
 
     return outliers, non_outliers
-
-
-def check_all_species_with_mash(args):
-    top_template_count = dict()
-    reference_results = dict()
-    exclude_list = []
-
-    if args.nanopore != []:
-        for file in args.nanopore:
-            if len(file.split(' ')) == 1:
-                name = file.split('/')[-1].split('.')[0]
-            else:
-                name = file.split(' ')[0].split('/')[-1].split('.')[0]
-
-            os.system('mash sketch -o {}/{}.msh -p 8 -s 25000 {}'.format(args.output, name, file))
-            os.system('mash dist {} {}/{}.msh > {}/{}_mash_results.txt'.format(args.db_dir + '/bac_db/25k_bac_db.msh', args.output, name, args.output, name))
-            top_template = find_highest_overlap_mash(args.output + '/' + name + '_mash_results.txt')
-
-            with open(args.db_dir + '/bac_db/bac_db.name', 'r') as f:
-                for line in f:
-                    if line.startswith(top_template):
-                        line = line.split()
-                        specie = line[1] + ' ' + line[2]
-                        if specie in top_template_count:
-                            top_template_count[specie] += 1
-                        else:
-                            top_template_count[specie] = 1
-                        print(top_template, name, specie)
-                        reference_results[name] = specie
-                        if specie == '' or specie == None:
-                            exclude_list.append(name)
-    if args.illumina != []:
-        for i in range(0, len(args.illumina), 2):
-            name = args.illumina[i].split('/')[-1].split('.')[0]
-            os.system('mash sketch -o {}/{}.msh -p 8 -s 25000 {} {}'.format(args.output, name, args.illumina[i], args.illumina[i+1]))
-            os.system('mash dist {} {}/{}.msh > {}/{}_mash_results.txt'.format(args.db_dir + '/bac_db/25k_bac_db.msh', args.output, name, args.output, name))
-            top_template = find_highest_overlap_mash(args.output + '/' + name + '_mash_results.txt')
-            with open(args.db_dir + '/bac_db/bac_db.name', 'r') as f:
-                for line in f:
-                    if line.startswith(top_template):
-                        line = line.split()
-                        specie = line[1] + ' ' + line[2]
-                        reference_results[name] = specie
-                        print(top_template, name, specie)
-                        if specie in top_template_count:
-                            top_template_count[specie] += 1
-                        else:
-                            top_template_count[specie] = 1
-                        reference_results[name] = specie
-                        if specie == '' or specie == None:
-                            exclude_list.append(name)
-
-    for item in top_template_count:
-        print (item, top_template_count[item])
-
-    top_specie = max(top_template_count, key=top_template_count.get)
-    print('The most common specie is {} with {} hits.'.format(top_specie, top_template_count[top_specie]))
-
-
-
-    for file in reference_results:
-        print(file, reference_results[file])
-        if reference_results[file] != top_specie:
-            exclude_list.append(file)
-
-    return exclude_list, top_specie
-
-def find_highest_overlap_mash(mash_results_file):
-    highest_overlap_reference = None
-    highest_overlap_count = -1
-    highest_identity_score = -1.0
-
-    with open(mash_results_file, 'r') as file:
-        for line in file:
-            parts = line.strip().split('\t')
-            if len(parts) < 5:
-                continue  # Skip incomplete lines
-
-            reference, _, identity_score, _, overlap = parts
-            identity_score = float(identity_score)
-            overlap_count = int(overlap.split('/')[0])
-
-            # Update if this line has a higher overlap or equal overlap with a higher identity score
-            if overlap_count > highest_overlap_count or (
-                    overlap_count == highest_overlap_count and identity_score > highest_identity_score):
-                highest_overlap_reference = reference
-                highest_overlap_count = overlap_count
-                highest_identity_score = identity_score
-
-    return highest_overlap_reference
 
 def run_ccphylo(distance_matrix_file, output_file):
     cmd = 'ccphylo tree --input {} --output {}'.format(distance_matrix_file, output_file)
