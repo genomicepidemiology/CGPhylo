@@ -1,11 +1,11 @@
-# CGPhylo
+# cgPhylo
 
-CGPhylo is a tool for determining phylogeny between bacterial isolates for which there are core genome MLST schemas ([cgmlst](https://https://www.cgmlst.org/). 
+cgPhylo is a tool for determining phylogeny between bacterial isolates for which there are core genome MLST schemas ([cgmlst.org](https://https://www.cgmlst.org/)). 
 Phylogeny is determined by comparing the multiple alignments of conserved core genes shared by the input samples.
 
 ## Installation
 
-To install CGPhylo run:
+To install cgPhylo run:
 
 ```bash
 conda install -c genomicepidemiology cgphylo

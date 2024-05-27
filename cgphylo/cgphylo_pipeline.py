@@ -18,10 +18,13 @@ def cgphylo_pipeline(args):
         filename=args.output + '/cgphylo.log',
         level=logging.INFO)
 
-    if args.fsf:
-        exclude_list, top_specie = fast_species_finder(args)
+    if args.species:
+        top_specie = args.species
     else:
-        exclude_list, top_specie = check_all_species(args)
+        if args.fsf:
+            exclude_list, top_specie = fast_species_finder(args)
+        else:
+            exclude_list, top_specie = check_all_species(args)
 
     species_db_string = get_species_db_string(top_specie, args.db_dir)
 

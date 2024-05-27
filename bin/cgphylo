@@ -34,7 +34,11 @@ if __name__ == '__main__':
     parser.add_argument('--threads', action="store", type=int, default=1, dest="threads",
                         help="Number of threads")
     parser.add_argument('--fsf', action="store_true", default=False, dest="fsf",
-                        help="Fast species finding. This assumes the input in samples are from the same species, not only varifies this from the first 5 samples.")
+                        help="Fast species finding. This assumes the input in samples are from the same species. Only 3 samples are used to ID species.")
+    parser.add_argument('--species', action="store", type=str, default=None, dest="species",
+                        help="Input species. This disables the species finding step."
+                             "Don't use this unless you are 100% sure of the species."
+                             "Input format: 'Campylobacter coli' or 'Campylobacter jejuni'")
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
     parser.add_argument('-h', '--help', action='help', help='Show this help message and exit')
 
