@@ -20,6 +20,7 @@ def cgphylo_pipeline(args):
 
     if args.species:
         top_specie = args.species
+        exclude_list = []
     else:
         if args.fsf:
             exclude_list, top_specie = fast_species_finder(args)
