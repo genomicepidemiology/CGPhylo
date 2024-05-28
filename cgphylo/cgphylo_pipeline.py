@@ -35,7 +35,7 @@ def cgphylo_pipeline(args):
             else:
                 name = file.split(' ')[0].split('/')[-1].split('.')[0]
             if not name in exclude_list:
-                cmd = 'kma -i {} -o {}/{} -t_db {} -ID 90 -mq 1 -md 5 -mct 0.5 -t 1 -mem_mode -dense -ref_fsa -ont -1t1'.format(file, args.output, name, species_db_string)
+                cmd = 'kma -i {} -o {}/{} -t_db {} -ID 90 -mq 1 -md 5 -mct 0.5 -t 1 -mem_mode -dense -ref_fsa -ont'.format(file, args.output, name, species_db_string)
                 os.system(cmd)
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
