@@ -37,14 +37,12 @@ def cgphylo_pipeline(args):
             if not name in exclude_list:
                 cmd = 'kma -i {} -o {}/{} -t_db {} -ID 90 -mq 1 -md 5 -mct 0.5 -t 8 -mem_mode -dense -ref_fsa -ont -1t1'.format(file, args.output, name, species_db_string)
                 os.system(cmd)
-                sys.exit()
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
             if not name in exclude_list:
                 cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -mq 1 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
                 os.system(cmd)
-
     sys.exit()
     outliers, non_outliers = find_gene_count_outliers(args.output)
     if len(outliers) > 0:
