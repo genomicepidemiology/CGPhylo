@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cbc5ac6c-29b4-420c-a4da-60d902ac48e6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cgphylo/cgphylo_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/cgphylo/cgphylo_pipeline.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -110,7 +111,7 @@
       <workItem from="1716536053064" duration="1000" />
       <workItem from="1716791649816" duration="1978000" />
       <workItem from="1716806880132" duration="649000" />
-      <workItem from="1716891860645" duration="3811000" />
+      <workItem from="1716891860645" duration="4519000" />
     </task>
     <servers />
   </component>
