@@ -52,6 +52,7 @@ def cgphylo_pipeline(args):
     if len(outliers) > 0:
         logging.info('Outliers: {}. These samples failed to identify enough genes to be included in the analysis.'.format(outliers))
     gene_list, non_shared_genes = find_common_genes(args.output, outliers)
+    print (len(gene_list), len(non_shared_genes))
     logging.info('{} genes found in all samples (core genes)'.format(len(gene_list)))
     logging.info('{} genes not found in all samples (non-shared genes)'.format(len(non_shared_genes)))
     sys.exit()
