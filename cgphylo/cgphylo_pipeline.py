@@ -10,7 +10,7 @@ from Bio.Align import PairwiseAligner
 
 def cgphylo_pipeline(args):
     """Main function"""
-    """
+
 
     os.system('mkdir {}'.format(args.output))
 
@@ -46,7 +46,7 @@ def cgphylo_pipeline(args):
             if not name in exclude_list:
                 cmd = 'kma -i {} {} -o {}/{} -t_db {} -ID 90 -mct 0.5 -mq 1 -md 5 -mem_mode -dense -ref_fsa -t 8'.format(args.illumina[i], args.illumina[i+1], args.output, name, species_db_string)
                 os.system(cmd)
-    """
+
     outliers, non_outliers = find_gene_count_outliers(args.output)
     if len(outliers) > 0:
         logging.info('Outliers: {}. These samples failed to identify enough genes to be included in the analysis.'.format(outliers))
