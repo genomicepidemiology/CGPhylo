@@ -41,10 +41,10 @@ if __name__ == '__main__':
                         help="Fast species finding. This assumes the input in samples are from the same species. Only 3 samples are used to ID species.")
     parser.add_argument('--species', action="store", type=str, default=None, dest="species",
                         help="Input species. This disables the species finding step."
-                             "Don't use this unless you are 100% sure of the species for all the samples."
-                             "Error checking is also skipped for incorrectly given samples!."
-                             "Input format: 'Campylobacter coli' or 'Campylobacter jejuni'."
-                             "NOT RECOMMENDED FOR USAGE.")
+                             " Don't use this unless you are 100% sure of the species for all the samples."
+                             " Error checking is also skipped for incorrectly given samples!."
+                             " Input format: 'Campylobacter coli' or 'Campylobacter jejuni'."
+                             " NOT RECOMMENDED FOR USAGE.")
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
     parser.add_argument('-h', '--help', action='help', help='Show this help message and exit')
 
