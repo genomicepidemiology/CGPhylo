@@ -13,6 +13,7 @@ def cgphylo_pipeline(args):
 
 
     os.system('mkdir {}'.format(args.output))
+    os.system('mkdir {}/tmp_kma'.format(args.output))
 
     logging.basicConfig(
         format='%(asctime)s %(message)s',
@@ -72,12 +73,9 @@ def fast_species_finder(args):
     top_specie = ''
     if args.nanopore != []:
         subset = " ".join(args.nanopore[0:5])
-        #Test -sasm i stedet for Sparse TBD USE THISE
-        #This produces normal KMA findes. parse the .res file instead!
-        #Brug homologi reduceret mapping.
-        os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -sasm -ss c' \
+        os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -sasm -ss c -tmp {}/tmp_kma' \
                   .format(subset, args.output + '/specie_mapping', args.db_dir + '/bac_db/bac_db',
-                          args.threads))
+                          args.threads, args.output))
         res_file = args.output + '/specie_mapping.res'
         top_template = highest_scoring_hit_res_file(res_file)
         if top_template != '':
@@ -85,9 +83,9 @@ def fast_species_finder(args):
 
     if args.illumina != []:
         subset = " ".join(args.illumina[0:10])
-        os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -sasm -ss c' \
+        os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -sasm -ss c -tmp {}/tmp_kma' \
                   .format(subset, args.output + '/specie_mapping', args.db_dir + '/bac_db/bac_db',
-                          args.threads))
+                          args.threads, args.output))
         res_file = args.output + '/specie_mapping.res'
         top_template = highest_scoring_hit_res_file(res_file)
         if top_template != '':
@@ -198,9 +196,9 @@ def check_all_species(args):
                 name = file.split('/')[-1].split('.')[0]
             else:
                 name = file.split(' ')[0].split('/')[-1].split('.')[0]
-            os.system('kma -i {} -o {}{} -t_db {} -mem_mode -t {} -sasm -ss c' \
+            os.system('kma -i {} -o {}{} -t_db {} -mem_mode -t {} -sasm -ss c -tmp {}/tmp_kma' \
                       .format(file, args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
-                              args.threads))
+                              args.threads, args.output))
             res_file = args.output + '/species_mapping_' + name + '.res'
             top_template = highest_scoring_hit_res_file(res_file)
             if top_template != '':
@@ -218,9 +216,9 @@ def check_all_species(args):
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
-            os.system('kma -i {} {} -o {}{} -t_db {} -mem_mode -t {} -sasm -ss c' \
+            os.system('kma -i {} {} -o {}{} -t_db {} -mem_mode -t {} -sasm -ss c -tmp {}/tmp_kma' \
                       .format(args.illumina[i], args.illumina[i+1], args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
-                              args.threads))
+                              args.threads, args.output))
             res_file = args.output + '/species_mapping_' + name + '.res'
             top_template = highest_scoring_hit_res_file(res_file)
             if top_template != '':
