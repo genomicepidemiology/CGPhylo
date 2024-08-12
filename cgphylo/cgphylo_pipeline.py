@@ -385,7 +385,7 @@ def find_common_genes(directory_path, outliers):
     gene_lists = []
 
     for file in files:
-        if file.endswith('.res'):
+        if file.endswith('.res') and 'species_mapping' not in file:
             file_id = file.split('.')[0]
             if file_id not in outliers:
                 genes = set()
