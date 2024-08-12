@@ -5,6 +5,8 @@ import re
 import hashlib
 import time
 import logging
+from Bio import SeqIO, Align
+from Bio.Align import PairwiseAligner
 
 def cgphylo_pipeline(args):
     """Main function"""
@@ -68,21 +70,24 @@ def fast_species_finder(args):
     top_specie = ''
     if args.nanopore != []:
         subset = " ".join(args.nanopore[0:5])
-        os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -Sparse -ss c' \
+        #Test -sasm i stedet for Sparse TBD USE THISE
+        #This produces normal KMA findes. parse the .res file instead!
+        #Brug homologi reduceret mapping.
+        os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -sasm -ss c' \
                   .format(subset, args.output + '/specie_mapping', args.db_dir + '/bac_db/bac_db',
                           args.threads))
-        spa_file = args.output + '/specie_mapping.spa'
-        top_template = highest_scoring_hit_spa_file(spa_file)
+        res_file = args.output + '/specie_mapping.res'
+        top_template = highest_scoring_hit_res_file(res_file)
         if top_template != '':
             top_specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
 
     if args.illumina != []:
         subset = " ".join(args.illumina[0:10])
-        os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -Sparse -ss c' \
+        os.system('kma -i {} -o {} -t_db {} -mem_mode -t {} -sasm -ss c' \
                   .format(subset, args.output + '/specie_mapping', args.db_dir + '/bac_db/bac_db',
                           args.threads))
-        spa_file = args.output + '/specie_mapping.spa'
-        top_template = highest_scoring_hit_spa_file(spa_file)
+        res_file = args.output + '/specie_mapping.res'
+        top_template = highest_scoring_hit_res_file(res_file)
         if top_template != '':
             top_specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
 
@@ -135,6 +140,31 @@ def get_genome_size(args, top_specie):
     genome_size = count_nucleotides(args.output + '/top_species.fasta')
     return genome_size
 
+
+def align_sequences(seq_a, seq_b):
+    aligner = Align.PairwiseAligner()  # Create an aligner object
+    aligner.mode = 'global'  # Use global alignment
+
+    # Set the gap penalties
+    aligner.open_gap_score = -10.0
+    aligner.extend_gap_score = -0.5
+
+    # Set the end gap penalties
+    aligner.target_end_gap_score = -10.0
+    aligner.query_end_gap_score = -10.0
+
+    # Perform the alignment
+    alignments = aligner.align(seq_a, seq_b)
+
+    # Extract the best alignment (the first alignment object is the best alignment)
+    best_alignment = alignments[0]
+
+    # Convert the alignment to strings
+    aligned_seq_a, aligned_seq_b = best_alignment.format().splitlines()[:2]
+
+    return aligned_seq_a, aligned_seq_b
+
+
 def count_nucleotides(fasta_file):
     nucleotide_count = 0
 
@@ -166,11 +196,11 @@ def check_all_species(args):
                 name = file.split('/')[-1].split('.')[0]
             else:
                 name = file.split(' ')[0].split('/')[-1].split('.')[0]
-            os.system('kma -i {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
+            os.system('kma -i {} -o {}{} -t_db {} -mem_mode -t {} -sasm -ss c' \
                       .format(file, args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
-            spa_file = args.output + '/species_mapping_' + name + '.spa'
-            top_template = highest_scoring_hit_spa_file(spa_file)
+            res_file = args.output + '/species_mapping_' + name + '.res'
+            top_template = highest_scoring_hit_res_file(res_file)
             if top_template != '':
                 specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
                 if specie in top_template_count:
@@ -186,11 +216,11 @@ def check_all_species(args):
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
-            os.system('kma -i {} {} -o {}{} -t_db {} -mem_mode -t {} -Sparse -ss c' \
+            os.system('kma -i {} {} -o {}{} -t_db {} -mem_mode -t {} -sasm -ss c' \
                       .format(args.illumina[i], args.illumina[i+1], args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads))
-            spa_file = args.output + '/species_mapping_' + name + '.spa'
-            top_template = highest_scoring_hit_spa_file(spa_file)
+            res_file = args.output + '/species_mapping_' + name + '.res'
+            top_template = highest_scoring_hit_res_file(res_file)
             if top_template != '':
                 specie = top_template.split(' ')[1] + ' ' + top_template.split(' ')[2]
                 if specie in top_template_count:
@@ -216,39 +246,6 @@ def check_all_species(args):
             exclude_list.append(file)
 
     return exclude_list, top_specie
-
-
-def find_highest_length_in_spa_files(directory, species):
-    highest_length = 0
-
-    # Check if the directory exists
-    if not os.path.exists(directory):
-        print(f"Directory '{directory}' does not exist.")
-        return None
-
-    # Loop through all files in the directory
-    for filename in os.listdir(directory):
-        if filename.endswith(".spa"):
-            filepath = os.path.join(directory, filename)
-
-            # Open the .spa file
-            with open(filepath, 'r') as spa_file:
-                # Read each line in the file
-                for line in spa_file:
-                    # Split the line by tab to access the columns
-                    columns = line.strip().split('\t')
-
-                    # Check if the species is a substring in the line
-                    if species in columns[0]:
-                        # Extract the length from the appropriate column
-                        length = int(columns[4])
-
-                        # Update the highest length if necessary
-                        if length > highest_length:
-                            highest_length = length
-
-    return highest_length
-
 
 
 
@@ -354,37 +351,19 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
                     realigned_seq1 = seq1
                     realigned_seq2 = seq2
 
-                # Ensure the sequences are of the same length after realignment
-                if len(realigned_seq1) != len(realigned_seq2):
-                    print(f"Warning: {gene} has different lengths between {file_names[i]} and {file_names[j]} after realignment")
-
-
                 # Dont count gaps test
                 if hash(realigned_seq1) != hash(realigned_seq2):
                     diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
                                a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
                 else:
                     diff = 0
-                #print (diff)
 
-                # Counts gaps. Gaps should not be included in SNPs distances, but consider using this for a another metric in the future.
-                #diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
-                #           a != b and ((a == '-' or b == '-') or not (a.islower() or b.islower())))
+                if diff > len(realigned_seq1) * 0.01: # if we observe a greater than 1% mutation rate.
+                    realigned_seq1, realigned_seq2 = align_sequences(allele_1, allele_2)
+                    diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
+                               a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
 
-                #if file_names[i] == 'SRR1188432_1':
-                #    if file_names[j] == 'SRR1188445_1':
-                #        gene_hash_1 = hashlib.md5(realigned_seq1.encode()).hexdigest()
-                #        gene_hash_2 = hashlib.md5(realigned_seq2.encode()).hexdigest()
-                #        print (gene_hash_1, gene_hash_2)
-                #if diff > 0:
-                #    if file_names[i] == 'SRR1188432_1':
-                #        if file_names[j] == 'SRR1188445_1':
-                #            print(f"{gene} has {diff} differences between {file_names[i]} and {file_names[j]}")
-                #            print (len(seq1), len(seq2))
-                #            print (realigned_seq1)
-                #            print (realigned_seq2)
-                #            print ('seq1: ', seq1)
-                #            print ('seq2: ', seq2)
+
 
                 # Count differences
                 count += diff
@@ -445,7 +424,7 @@ def find_duplicates(strings):
     return duplicates
 
 
-def highest_scoring_hit_spa_file(file_path):
+def highest_scoring_hit_res_file(file_path):
     """
     Identifies and returns the highest scoring template from a tab-separated file.
 
@@ -470,7 +449,7 @@ def highest_scoring_hit_spa_file(file_path):
             columns = line.split('\t')
             try:
                 # Extract score and compare to find the highest
-                score = int(columns[2])  # Score is expected in the 3rd column
+                score = int(columns[1])  # Score is expected in the 3rd column
                 if score > highest_score:
                     highest_score = score
                     highest_scoring_template = columns[0]  # Template is expected in the 1st column
