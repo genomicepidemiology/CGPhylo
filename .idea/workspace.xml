@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cbc5ac6c-29b4-420c-a4da-60d902ac48e6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/cgphylo" beforeDir="false" afterPath="$PROJECT_DIR$/bin/cgphylo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cgphylo/cgphylo_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/cgphylo/cgphylo_pipeline.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/paper_scripts/newick_to_matrix.py" beforeDir="false" afterPath="$PROJECT_DIR$/paper_scripts/newick_to_matrix.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -122,6 +119,9 @@
       <workItem from="1721929281239" duration="3785000" />
       <workItem from="1722409813936" duration="38314000" />
       <workItem from="1722849574687" duration="1227000" />
+      <workItem from="1722860442817" duration="21677000" />
+      <workItem from="1723530571301" duration="6314000" />
+      <workItem from="1724663355314" duration="785000" />
     </task>
     <servers />
   </component>

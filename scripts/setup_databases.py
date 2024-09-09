@@ -13,13 +13,15 @@ sys.path = [os.path.join(os.path.dirname(os.path.realpath(__file__)),'..')] + sy
 
 #NOTE Make sure to remove Burkholderia mallei (RKI) and only use Burkholderia mallei (FLI). Make sure to rename the folder to Burkholderia_mallei_cgMLST_alleles.
 
+#NOTE This script may NOT work, if some new species are uploaded to cgmlst.org. In that case, please open a ticket on the Github, and i'll get on it.
+#It is easiest to download the already indexed database.
+
 def main(args):
     """Main function"""
     check_kma_installed()
     if not os.path.exists(args.output):
         os.makedirs(args.output)
     decompress_tar_archive(args.zip, args.output)
-    #Consider added non-zip
     allele_folders = os.listdir(args.output)
     for allele_folder in allele_folders:
         if not allele_folder.startswith('.') and 'bac_db' not in allele_folder:
@@ -49,8 +51,6 @@ def main(args):
 
             os.system('rm {}/*.fasta'.format(path))
             os.system('rm {}/*complete*'.format(path))
-
-    # Add bac_db TBD # Place a download wget to bac_db from cge. Perhaps download before unpacking others? Include it in the tar ball?
 
 
 def derive_gene_names(name_file):

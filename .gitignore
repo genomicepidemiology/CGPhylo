@@ -30,6 +30,7 @@ MANIFEST
 #My stuff
 alignment_data/
 output_plots/
+local_scripts/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
