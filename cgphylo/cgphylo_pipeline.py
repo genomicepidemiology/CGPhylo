@@ -199,6 +199,9 @@ def check_all_species(args):
             os.system('kma -i {} -o {}{} -t_db {} -mem_mode -t {} -sasm -ss c -tmp {}/tmp_kma' \
                       .format(file, args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
                               args.threads, args.output))
+            print ('kma -i {} -o {}{} -t_db {} -mem_mode -t {} -sasm -ss c -tmp {}/tmp_kma' \
+                      .format(file, args.output + '/species_mapping_', name, args.db_dir + '/bac_db/bac_db',
+                              args.threads, args.output))
             res_file = args.output + '/species_mapping_' + name + '.res'
             top_template = highest_scoring_hit_res_file(res_file)
             if top_template != '':
