@@ -28,7 +28,7 @@ For Burkholderia mallei only download the FLI scheme and make sure to rename the
 ```
 tar -zcvf cgMLST_schemes.tar.gz cgMLST_schemes
 ```
-3.) run the setup_databases.py script found in the scripts folder. This will create the database and index it. Note: If this doesn't work, it may be because of a new update to the cgMLST databases which we have accounted for. Please raies an issue on Github in that case, and we will fix it. 
+3.) run the setup_databases.py script found in the scripts folder. This will create the database and index it. Note: If this doesn't work, it may be because of a new update to the cgMLST databases which we have not accounted for. Please raies an issue on Github in that case, and we will fix it. 
 ```
 python3 scripts/setup_databases.py -i cgMLST_schemes.tar.gz -o cgMLST_db
 ```

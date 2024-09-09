@@ -215,7 +215,7 @@ def check_all_species(args):
                 reference_results[name] = 'No hits found'
                 exclude_list.append(name)
                 logging.info('No hits found for nanopore file: {}'.format(file))
-            print (name, specie)
+            #print (name, specie)
     if args.illumina != []:
         for i in range(0, len(args.illumina), 2):
             name = args.illumina[i].split('/')[-1].split('.')[0]
@@ -236,8 +236,8 @@ def check_all_species(args):
                 exclude_list.append(name)
                 logging.info('No hits found for nanopore file: {}'.format(file))
 
-    for item in top_template_count:
-        print(item, top_template_count[item])
+    #for item in top_template_count:
+    #    print(item, top_template_count[item])
 
     top_specie = max(top_template_count, key=top_template_count.get)
     print('The most common specie is {} with {} hits.'.format(top_specie, top_template_count[top_specie]))
@@ -362,7 +362,7 @@ def calculate_pairwise_distances(sequences_dict, gap_map):
                     diff = 0
 
                 if diff > len(realigned_seq1) * 0.01: # if we observe a greater than 1% mutation rate.
-                    realigned_seq1, realigned_seq2 = align_sequences(allele_1, allele_2)
+                    realigned_seq1, realigned_seq2 = align_sequences(seq1, seq2)
                     diff = sum(1 for a, b in zip(realigned_seq1, realigned_seq2) if
                                a != b and a != '-' and b != '-' and not (a.islower() or b.islower()))
 
