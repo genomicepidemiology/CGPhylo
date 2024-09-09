@@ -1,0 +1,48 @@
+on:
+  push:
+    tags:
+      - '*' # Matches all
+
+name: Create Release
+
+jobs:
+  conda-noarch:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+
+      - name: Make conda yaml
+        run: |
+          pip install PyYAML
+          python make_conda.py
+
+      #- name: Install conda-build
+      #  run: conda install conda-build
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: 3.8  # Updated Python version
+          mamba-version: "*"
+          channels: conda-forge,bioconda,defaults
+          channel-priority: true
+          activate-environment: anaconda-client-env
+          environment-file: envs/noarch-build.yml
+
+      - name: build conda package
+        run: |
+          conda mambabuild conda -c conda-forge -c bioconda -c defaults --output-folder .
+
+      - name: upload conda package
+        run: |
+          anaconda -t ${{ secrets.GENOMICEPIDEMIOLOGY_CONDA_AUTH_TOKEN }} upload --label main noarch/*.tar.bz2
