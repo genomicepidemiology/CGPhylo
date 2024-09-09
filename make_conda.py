@@ -29,9 +29,6 @@ data = {
             "kma >=1.4.9"
         ]
     },
-    "test": {
-        "imports": ["cgphylo"]
-    },
     "about": {
         "home": "https://github.com/genomicepidemiology/CGPhylo",
         "summary": "CGPhylo - core genome phylogenetics",

@@ -8,11 +8,6 @@ setup(
     name='cgphylo',
     version=__version__,
     packages=find_packages(),
-    include_package_data=True,  # Ensure this is set to True
-    package_data={
-        '': ['*.json'],  # Include all json files from any package
-        'nanomgt': ['*.json'],  # Specifically include json files from the nanomgt package if needed
-    },
     url='https://github.com/genomicepidemiology/cgphylo',
     license='',
     install_requires=[],
