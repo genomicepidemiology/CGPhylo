@@ -1,0 +1,10 @@
+name: anaconda-client-env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - mamba
+  - python
+  - boa
+  - anaconda-client
