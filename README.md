@@ -16,7 +16,7 @@ conda install -c genomicepidemiology cgphylo
 The most convenient way (by far) to use this tool is to download the pre-indexed database (Current version indexed from december 22nd 2023 cgMLST scheme):
 
 ```
-wget https://cge.cbs.dtu.dk/services/cgphylo/cgmlst_db.tar.gz
+wget https://cge.food.dtu.dk/services/cgphylo/cgmlst_db.tar.gz
 tar -zxvf cgmlst_db.tar.gz
 ```
 
