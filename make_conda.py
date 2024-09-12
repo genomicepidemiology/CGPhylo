@@ -26,7 +26,8 @@ data = {
             "pip"
         ],
         "run": [
-            "kma >=1.4.9"
+            "kma >=1.4.9",
+            "biopython"
         ]
     },
     "about": {
